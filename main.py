@@ -1,13 +1,16 @@
 import imagemanager as im
 
-#/Users/ot/.pyenv/versions/3.10.16/
-
+#setup imagemodifiers
 lim = im.LatentImageModifier("images/*.png")
-lim.trim_images()
+lim.resize_images()
 lim.encode_images()
-final_image = lim.decode_image(lim.modify("average"))
 
-ip = im.ImagePlotter(len(lim.images) + 1, 2, 16, 8 * (len(lim.images) + 1))
+#modify images
+final_image = lim.decode_image(lim.modify("none"))
+
+
+#plot and display images and latent images
+ip = im.ImagePlotter(len(lim.images) + 1, 2, 32, 8 * (len(lim.images) + 1))
 
 for i, image in enumerate(lim.images):
     ip.plot_image(image, 2 * i + 1, f'Image {i + 1}')
