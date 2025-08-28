@@ -155,7 +155,7 @@ if __name__ == "__main__":
     image -> resize_down -> encode -> resize_up = full_latent_resized;
     subject -> encode -> subj_latent;
     paste subj_latent onto full_latent_resized (with or without blending);
-    decode
+    decodee
     '''
     
     p = ImageProcessor()
