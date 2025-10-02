@@ -8,6 +8,7 @@ from diffusers import AutoencoderKL
 import torch.nn.functional as F
 from torchvision.transforms.functional import to_pil_image
 from PIL import ImageFilter
+import os
 
 
 class ImageProcessor:
@@ -18,8 +19,7 @@ class ImageProcessor:
         #load models
         self.detection_model = torchvision.models.detection.fasterrcnn_resnet50_fpn(pretrained=True).to(self.device).eval()
         self.vae = AutoencoderKL.from_pretrained("./models").to(self.device).eval()
-
-    #finds subject and returns all subjects and their coordinates
+        
     def find_subjects(self, image, max_width=1000, max_height=1000):
         image_tensor = transforms.ToTensor()(image).to(self.device)
 
@@ -84,8 +84,7 @@ class ImageProcessor:
         new_width = int(width * scale)
         new_height = int(height * scale)
         return image.resize((new_width, new_height))
-    
-    #makes an image/latent displayable on a plot
+
     def to_displayable(self, image, is_latent=False):
         if is_latent:
             return image.squeeze(0).mean(0).cpu()
@@ -110,7 +109,6 @@ class ImageDisplayer:
 
     def add_to_plot(self, image, row, column, title=None, cmap=None, axis='off'):
         ax = self.axes[row][column]
-        print(f"{image.shape} {type(image)}")
         ax.imshow(image, cmap=cmap)
         ax.set_title(title)
         ax.axis(axis)
@@ -149,148 +147,119 @@ def edge_fade_mask(width, height, fade_px):
     return Image.fromarray(mask, mode="L")
 
 
-if __name__ == "__main__":
-    ''''
-    test B: 
-    image -> resize_down -> encode -> resize_up = full_latent_resized;
-    subject -> encode -> subj_latent;
-    paste subj_latent onto full_latent_resized (with or without blending);
-    decodee
-    '''
-    
-    p = ImageProcessor()
-    d = ImageDisplayer()
-    scale = 0.25
+def edge_fade_mask_latent(width, height, fade_px, device="cpu"):
+    y = torch.arange(height, device=device).unsqueeze(1).expand(height, width)
+    x = torch.arange(width, device=device).unsqueeze(0).expand(height, width)
 
-    #find and store subjects
-    image = load_image("images/dog2.jpeg")
-    subjects = p.find_subjects(image)
+    dist_left   = x
+    dist_right  = (width - 1) - x
+    dist_top    = y
+    dist_bottom = (height - 1) - y
 
-    #backgound: encode resized, decode, upsize
-    encoded_resized_image = p.encode(p.resize_image(image, scale))
-    decoded_resized_image_tensor = p.decode(encoded_resized_image)
-    decoded_resized_image_pil = tensor_to_pil(decoded_resized_image_tensor)
-    merged_image = p.resize_image(decoded_resized_image_pil, 1 / scale).copy()
+    dist_edge = torch.minimum(torch.minimum(dist_left, dist_right),
+                              torch.minimum(dist_top, dist_bottom)).float()
 
-    d.create_plot(1, 2)
-    d.add_to_plot(np.array(image), 0, 0, title="Original")
+    alpha = torch.clamp(dist_edge / max(1.0, float(fade_px)), 0.0, 1.0)
+    alpha = alpha ** 1.5 
 
-    for idx, (subject_image, (x1, y1)) in enumerate(subjects):
-        encoded_subject = p.encode(subject_image)
-        decoded_subject_tensor = p.decode(encoded_subject)
-        decoded_subject_img = tensor_to_pil(decoded_subject_tensor)
+    return alpha.unsqueeze(0).unsqueeze(0)  
 
-        w, h = decoded_subject_img.size
+def process_image_dod(image_processor, image_displayer, image_path, output_name, scale=0.25):
+    #take image and find its subjects
+    image = load_image(image_path)
+    image_displayer.add_to_plot(np.array(image), 0, 0, title="Original")
+    subjects = image_processor.find_subjects(image)
+
+    #resize image by scale, then encode + decode
+    decoded_image = image_processor.decode(image_processor.encode(image_processor.resize_image(image, scale)))
+    #then resize image back to the original size
+    decoded_image = image_processor.resize_image(tensor_to_pil(decoded_image), 1 / scale)
+
+    #for each subject, encode + decode, 
+    #then attach to the original image with blend
+    for i, (subject_image, (x1, y1)) in enumerate(subjects):
+        decoded_subject = p.decode(p.encode(subject_image))
+        decoded_subject = tensor_to_pil(decoded_subject)
+
+        w, h = decoded_subject.size
         fade_px = int(0.08 * min(w, h)) 
         mask = edge_fade_mask(w, h, fade_px)
 
-        merged_image.paste(decoded_subject_img, (int(x1), int(y1)), mask)
-        print(f"subject {idx+1} blended at ({x1},{y1}), fade {fade_px}px")
+        decoded_image.paste(decoded_subject, (int(x1), int(y1)), mask)
+        print(f"Subject {i + 1} placed at ({x1},{y1})")
 
+    #display
+    image_displayer.add_to_plot(np.array(decoded_image), 0, 1, title="Merged")
+    image_displayer.make_tight_layout()
+    image_displayer.display_plot()
 
-    d.add_to_plot(np.array(merged_image), 0, 1, title="merged + fade")
+    #save image
+    os.makedirs("outputs", exist_ok=True)
+    decoded_image.save(f"outputs/{output_name}.png")
 
-    d.make_tight_layout()
-    d.display_plot()
+def process_image_lol(image_processor, image_displayer, image_path, output_name, scale=0.25):
+    def paste_latent(base_latent, subject_latent, top, left, fade_ratio=0.08):
+        _, _, h, w = subject_latent.shape
+        fade_px = int(fade_ratio * min(h, w))
 
+        # torch fade mask
+        mask = edge_fade_mask_latent(w, h, fade_px, device=subject_latent.device)
 
-        
-""" 
- #image -> resized_down(image) -> encode -> resize_up(latent) -> decode   
-if __name__ == "__main__":
-    p = ImageProcessor()
-    d = ImageDisplayer()
-    scale = 0.25
+        # blend
+        base_patch = base_latent[:, :, top:top+h, left:left+w]
+        blended_patch = base_patch * (1 - mask) + subject_latent * mask
+        base_latent[:, :, top:top+h, left:left+w] = blended_patch
 
-    image = load_image("images/dog2.jpeg")
-    subjects = p.find_subjects(image)
+        return base_latent
 
-    encoded_resized_image = p.encode(p.resize_image(image, scale))
-    print(f"shape of encoded resized image: {encoded_resized_image.shape}")
+    #take image and find its subjects
+    image = load_image(image_path)
+    image_displayer.add_to_plot(np.array(image), 0, 0, title="Original")
+    subjects = image_processor.find_subjects(image)
 
-    #esize latent back up to original resolution
-    full_latent_resized = F.interpolate(
-        encoded_resized_image,
+    encoded_image = image_processor.encode(image_processor.resize_image(image, scale))
+
+    image_latent = F.interpolate(
+        encoded_image,
         scale_factor=1/scale,
         mode="bilinear",
         align_corners=False
     )
 
-    merged_latent = full_latent_resized.clone()
+    merged_latent = image_latent.clone()
 
-    for idx, (subject_image, (x1, y1)) in enumerate(subjects):
+    for i, (subject_image, (x1, y1)) in enumerate(subjects):
+        #for each subject, encode + attach to original image latent
         encoded_subject = p.encode(subject_image)
         
         top = y1 // 8
         left = x1 // 8
 
         merged_latent = paste_latent(merged_latent, encoded_subject, top, left)
-        print(f"subject latent {idx+1} pasted at coords ({top}, {left})")
+        print(f"subject latent {i + 1} placed at ({top}, {left})")
 
   
-    decoded_merged_tensor = p.decode(merged_latent)
-    decoded_merged_pil = tensor_to_pil(decoded_merged_tensor)
+    #decode merged + make displayable
+    decoded_merged = tensor_to_pil(p.decode(merged_latent))
+    
+    #dispaly
+    image_displayer.add_to_plot(decoded_merged, 0, 1, title="Merged")
+    image_displayer.make_tight_layout()
+    image_displayer.display_plot()
+    
+    #save_image
+    os.makedirs("outputs", exist_ok=True)
+    decoded_merged.save(f"outputs/{output_name}.png")
 
-
-    d.create_plot(1, 3)
-   
-    #original image
-    d.add_to_plot(np.array(image), 0, 0, title="original")
-    #latent visualization 
-    merged_latent = p.to_displayable(merged_latent, is_latent=True)
-    d.add_to_plot(merged_latent, 0, 1, title="merged latent", cmap="viridis")
-    #final decoded image
-    decoded_image = p.to_displayable(decoded_merged_tensor)
-    d.add_to_plot(decoded_image, 0, 2, title="merged")
-
-    d.make_tight_layout()
-    d.display_plot()
 
 if __name__ == "__main__":
     p = ImageProcessor()
-    d = ImageDisplayer()
-    scale = 0.25
-
-    image = load_image("images/dog2.jpeg")
-    subjects = p.find_subjects(image)
     
-    encoded_resized_image = p.encode(p.resize_image(image, scale))
-    print(f"shape of encoded resized image: {encoded_resized_image.shape} ")
-    
-    decoded_resized_image_tensor = p.decode(encoded_resized_image)
-    decoded_resized_image_pil = tensor_to_pil(decoded_resized_image_tensor)
-    resized_decoded_image_pil = p.resize_image(decoded_resized_image_pil, 1 / scale)
+    d1 = ImageDisplayer()
+    d1.create_plot(1, 2)
 
-    merged_image = resized_decoded_image_pil.copy()
+    process_image_dod(p, d1, "images/flower2.png", "decoded flower")
 
-    d.create_plot(2, 1)
+  
 
-    d.add_to_plot(p.to_displayable(decoded_resized_image_tensor), 1, 0, title="image")
-
-    for idx, (subject_image, (x1, y1)) in enumerate(subjects):
-        encoded_subject = p.encode(subject_image)
-        decoded_subject_tensor = p.decode(encoded_subject)
-        decoded_subject_img = p.to_displayable(decoded_subject_tensor)
-        merged_image.paste(subject_image, (int(x1), int(y1)))
-        print(f"encoded_subject: {encoded_subject.shape}")
-        print(f"subject chunk processed: {idx + 1}")
-
-    merged_image_np = np.array(merged_image) / 255.0
-    d.add_to_plot(merged_image_np, 0, 0, title="Merged Image")
-
-    #alpha = 1/(a*dist_to_subj^2 + b)
-    #if dist_to_subj > epsilon: alpha=0
-    #pixel(x,y) = subject_pixel(x,y)*(1-alpha) + bg_pixel(x,y)*alpha
-
-    #image -> resized_down(image) -> encode -> resize_up(latent) -> decode
-
-    '''
-    
-    '''
-
-
-    d.make_tight_layout()
-    d.display_plot()
-    
-"""
 
