@@ -1,15 +1,14 @@
+import os
+import numpy as np
 import torch
 import torchvision
 import matplotlib.pyplot as plt
-import numpy as np
-from PIL import Image, ImageFilter
+import torch.nn.functional as F
+from PIL import Image
 from torchvision import transforms
 from diffusers import AutoencoderKL
-import torch.nn.functional as F
 from torchvision.transforms.functional import to_pil_image
-from PIL import ImageFilter
-import os
-
+from segment_anything import sam_model_registry, SamPredictor
 
 class ImageProcessor:
     def __init__(self, detection_threshold=0.8):
@@ -85,17 +84,11 @@ class ImageProcessor:
         new_height = int(height * scale)
         return image.resize((new_width, new_height))
 
-    def to_displayable(self, image, is_latent=False):
-        if is_latent:
-            return image.squeeze(0).mean(0).cpu()
-
-        image = (image.clamp(-1, 1) + 1) / 2
-        return image.squeeze(0).permute(1, 2, 0).cpu().numpy()   
-
 class ImageDisplayer:
-    def __init__(self):
+    def __init__(self, rows=None, cols=None):
         self.axes = None
         self.figure = None
+        self.create_plot(rows, cols)
 
     def create_plot(self, rows, columns):
         self.figure, self.axes = plt.subplots(rows, columns)
@@ -127,7 +120,7 @@ def load_image(file_path):
         image = Image.open(file_path).convert("RGB")
         return image
     
-def edge_fade_mask(width, height, fade_px):
+def get_fade_mask(width, height, fade_px):
     y = np.arange(height)[:, None]
     x = np.arange(width)[None, :]
 
@@ -146,8 +139,7 @@ def edge_fade_mask(width, height, fade_px):
     mask = (alpha * 255.0).astype(np.uint8)
     return Image.fromarray(mask, mode="L")
 
-
-def edge_fade_mask_latent(width, height, fade_px, device="cpu"):
+def get_fade_mask_latent(width, height, fade_px, device="cpu"):
     y = torch.arange(height, device=device).unsqueeze(1).expand(height, width)
     x = torch.arange(width, device=device).unsqueeze(0).expand(height, width)
 
@@ -163,6 +155,26 @@ def edge_fade_mask_latent(width, height, fade_px, device="cpu"):
     alpha = alpha ** 1.5 
 
     return alpha.unsqueeze(0).unsqueeze(0)  
+
+def get_sam_mask(image, box, sam_checkpoint, sam_model_type="vit_h", device=None):
+    if device is None:
+        device = "cuda" if torch.cuda.is_available() else "cpu"
+
+    x1, y1, x2, y2 = map(int, box)
+    #set full image for predictor
+    sam = sam_model_registry[sam_model_type](checkpoint=sam_checkpoint)
+    sam.to(device=device)
+    predictor = SamPredictor(sam)
+    predictor.set_image(np.array(image))
+
+    input_box = np.array([[x1, y1, x2, y2]])
+    masks, scores, logits = predictor.predict(box=input_box, multimask_output=False)
+
+    mask = masks[0].astype(np.uint8) * 255
+    mask_pil = Image.fromarray(mask, mode='L')
+    # rop to box
+    mask_cropped = mask_pil.crop((x1, y1, x2, y2)) if mask_pil.size != (x2 - x1, y2 - y1) else mask_pil
+    return mask_cropped
 
 def process_image_dod(image_processor, image_displayer, image_path, output_name, scale=0.25):
     #take image and find its subjects
@@ -183,7 +195,7 @@ def process_image_dod(image_processor, image_displayer, image_path, output_name,
 
         w, h = decoded_subject.size
         fade_px = int(0.08 * min(w, h)) 
-        mask = edge_fade_mask(w, h, fade_px)
+        mask = get_fade_mask(w, h, fade_px)
 
         decoded_image.paste(decoded_subject, (int(x1), int(y1)), mask)
         print(f"Subject {i + 1} placed at ({x1},{y1})")
@@ -197,13 +209,56 @@ def process_image_dod(image_processor, image_displayer, image_path, output_name,
     os.makedirs("outputs", exist_ok=True)
     decoded_image.save(f"outputs/{output_name}.png")
 
+def process_image_sam(image_processor, image_displayer, image_path, output_name, scale=0.25):
+    #take image and find its subjects
+    image = load_image(image_path)
+    image_displayer.add_to_plot(np.array(image), 0, 0, title="Original")
+    subjects = image_processor.find_subjects(image)
+
+    #resize image by scale, then encode + decode
+    decoded_image = image_processor.decode(image_processor.encode(image_processor.resize_image(image, scale)))
+    #then resize image back to the original size
+    decoded_image = image_processor.resize_image(tensor_to_pil(decoded_image), 1 / scale)
+
+    #for each subject, encode + decode, then attach to the original image with blend
+    for i, (subject_image, (x1, y1)) in enumerate(subjects):
+        decoded_subject = image_processor.decode(image_processor.encode(subject_image))
+        decoded_subject = tensor_to_pil(decoded_subject)
+
+        # try to use SAM mask if available via environment variable SAM_CHECKPOINT
+        sam_checkpoint = os.environ.get('SAM_CHECKPOINT', None)
+        if sam_checkpoint:
+            try:
+                mask = get_sam_mask(image, (x1, y1, x1 + subject_image.width, y1 + subject_image.height), sam_checkpoint)
+            except Exception:
+                # fallback
+                w, h = decoded_subject.size
+                fade_px = int(0.08 * min(w, h))
+                mask = get_fade_mask(w, h, fade_px)
+        else:
+            w, h = decoded_subject.size
+            fade_px = int(0.08 * min(w, h))
+            mask = get_fade_mask(w, h, fade_px)
+
+        decoded_image.paste(decoded_subject, (int(x1), int(y1)), mask)
+        print(f"Subject {i + 1} placed at ({x1},{y1})")
+
+    #display
+    image_displayer.add_to_plot(np.array(decoded_image), 0, 1, title="Merged")
+    image_displayer.make_tight_layout()
+    image_displayer.display_plot()
+
+    #save image
+    os.makedirs("outputs", exist_ok=True)
+    decoded_image.save(f"images/outputs/{output_name}.png")
+
 def process_image_lol(image_processor, image_displayer, image_path, output_name, scale=0.25):
     def paste_latent(base_latent, subject_latent, top, left, fade_ratio=0.08):
         _, _, h, w = subject_latent.shape
         fade_px = int(fade_ratio * min(h, w))
 
         # torch fade mask
-        mask = edge_fade_mask_latent(w, h, fade_px, device=subject_latent.device)
+        mask = get_fade_mask_latent(w, h, fade_px, device=subject_latent.device)
 
         # blend
         base_patch = base_latent[:, :, top:top+h, left:left+w]
@@ -251,15 +306,12 @@ def process_image_lol(image_processor, image_displayer, image_path, output_name,
     os.makedirs("outputs", exist_ok=True)
     decoded_merged.save(f"outputs/{output_name}.png")
 
-
-if __name__ == "__main__":
-    p = ImageProcessor()
-    
-    d1 = ImageDisplayer()
-    d1.create_plot(1, 2)
-
-    process_image_dod(p, d1, "images/flower2.png", "decoded flower")
+p = ImageProcessor()
+d = ImageDisplayer(1, 2)
+process_image_sam(p, d, "images/car1.png", "car1_results")
 
   
+    
 
+   
 
