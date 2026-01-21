@@ -240,9 +240,10 @@ def process_image_sam(image_processor, image_displayer, image_path, output_name,
         if sam_checkpoint:
             print("Using SAM for mask generation")
             try:
-                mask = get_sam_mask(image, (x1, y1, x1 + subject_image.width, y1 + subject_image.height), sam_checkpoint)
+                mask = get_sam_mask(image, (x1, y1, x1 + decoded_subject.width, y1 + decoded_subject.height), sam_checkpoint)
             except Exception:
                 # fallback
+                print("SAM mask generation failed, using fade mask instead")
                 w, h = decoded_subject.size
                 fade_px = int(0.08 * min(w, h))
                 mask = get_fade_mask(w, h, fade_px)
