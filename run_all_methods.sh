@@ -3,7 +3,7 @@
 # Script to run all methods (DOD, SAM, LOL) on all images (cat1, cat2)
 
 images=("cat1" "cat2" "cat3" "car1" "car2" "car3" "dog1" "dog2" "horse1" "horse2" "horse3")
-methods=("dod" "sam" "lol")
+methods=("dod" "sam" "lol_fade" "lol_sam")
 
 for image in "${images[@]}"; do
     for method in "${methods[@]}"; do
