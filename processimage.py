@@ -161,6 +161,10 @@ def get_sam_mask(image, box, sam_checkpoint, sam_model_type="vit_h", device=None
     if device is None:
         device = "cuda" if torch.cuda.is_available() else "cpu"
 
+    # Auto-detect model type from checkpoint filename if not explicitly provided
+    if sam_model_type == "vit_h" and sam_checkpoint and "vit_b" in sam_checkpoint:
+        sam_model_type = "vit_b"
+
     x1, y1, x2, y2 = map(int, box)
     #set full image for predictor
     sam = sam_model_registry[sam_model_type](checkpoint=sam_checkpoint)
@@ -368,7 +372,7 @@ d = ImageDisplayer(1, 2)
 if __name__ == "__main__":
     if len(sys.argv) < 4:
         print("Usage: python processimage.py <method_name> <image_path> <output_name_without_extension> ")
-        print("Example: python processimage.py images/car1.png car1_results sam")
+        print("Example: python processimage.py lol_sam images/input/car1.png car1_results")
         sys.exit(1)
     
     method_name = sys.argv[1]
