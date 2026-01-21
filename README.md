@@ -36,6 +36,8 @@ git add models/sam_vit_b_01ec64.pth
 git commit -m "Add model to LFS"
 git push origin main
 ```
+## How to run the image generation
+eg. `python processimage.py lol_sam images/input/car1.png car1_lol_sam_results`
 
 ## Sample images
 
