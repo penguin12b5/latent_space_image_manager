@@ -14,17 +14,17 @@
     after activate the virtual environment
     `python -m pip install -r requirements.txt`
 
-## download model files from git
+## Download model files from git
 * install git-lfs:
     `brew install git-lfs`
     `git lfs install`
 * pull the lfs files
     `git lfs pull`
 
-## check in a large model file to git
+## Check in a large model file to git
 `git lfs track "*.pth"`
 `git lfs track "*.bin"`
-The will update `.gitattributes`
+This will update `.gitattributes`
 
 or
 ```
