@@ -173,7 +173,7 @@ def get_sam_mask(image, box, sam_checkpoint, sam_model_type="vit_h", device=None
 
     mask = masks[0].astype(np.uint8) * 255
     mask_pil = Image.fromarray(mask, mode='L')
-    # rop to box
+    # crop to box
     mask_cropped = mask_pil.crop((x1, y1, x2, y2)) if mask_pil.size != (x2 - x1, y2 - y1) else mask_pil
     return mask_cropped
 
@@ -259,13 +259,38 @@ def process_image_sam(image_processor, image_displayer, image_path, output_name,
     #save image
     save_image(decoded_image, output_name)
 
-def process_image_lol(image_processor, image_displayer, image_path, output_name, scale=0.25):
-    def paste_latent(base_latent, subject_latent, top, left, fade_ratio=0.08):
+def process_image_lol(image_processor, image_displayer, image_path, output_name, scale=0.25, mask_type="fade"):
+
+    def paste_latend_with_fade(base_latent, subject_latent, top, left, fade_ratio=0.08):
         _, _, h, w = subject_latent.shape
         fade_px = int(fade_ratio * min(h, w))
 
         # torch fade mask
         mask = get_fade_mask_latent(w, h, fade_px, device=subject_latent.device)
+
+        # blend
+        base_patch = base_latent[:, :, top:top+h, left:left+w]
+        blended_patch = base_patch * (1 - mask) + subject_latent * mask
+        base_latent[:, :, top:top+h, left:left+w] = blended_patch
+
+        return base_latent
+
+    def paste_latend_with_sam(base_latent, subject_latent, top, left, mask_sam, mode="bilinear"):
+        _, _, h, w = subject_latent.shape
+
+        # downsample SAM mask to latent size
+        alpha = torch.from_numpy(np.array(mask_sam))[None, None, ...]
+        alpha = alpha.to(device=base_latent.device, dtype=base_latent.dtype)
+        mask = F.interpolate(
+            alpha,
+            size=(h, w),
+            mode=mode,
+            align_corners=False if mode in ("bilinear", "bicubic") else None
+        )
+
+        print("before normalization mask min/max:", mask.min().item(), mask.max().item())
+        mask = mask / 255.0
+        print("after normalization mask min/max:", mask.min().item(), mask.max().item())
 
         # blend
         base_patch = base_latent[:, :, top:top+h, left:left+w]
@@ -297,7 +322,24 @@ def process_image_lol(image_processor, image_displayer, image_path, output_name,
         top = y1 // 8
         left = x1 // 8
 
-        merged_latent = paste_latent(merged_latent, encoded_subject, top, left)
+        match mask_type:
+            case "fade":
+                merged_latent = paste_latend_with_fade(merged_latent, encoded_subject, top, left)
+            case "sam":
+                decoded_subject = tensor_to_pil(p.decode(encoded_subject))
+                sam_checkpoint = os.environ.get('SAM_CHECKPOINT', None)
+                print("Using SAM for mask generation")
+                try:
+                    mask_pil = get_sam_mask(image, (x1, y1, x1 + decoded_subject.width, y1 + decoded_subject.height), sam_checkpoint)
+                    merged_latent = paste_latend_with_sam(merged_latent, encoded_subject, top, left, mask_pil)
+                    print(f"Subject latent {i + 1} placed at ({top}, {left}) using SAM mask")
+                except Exception:
+                    import traceback
+                    traceback.print_exc()
+                    raise RuntimeError("SAM mask generation failed")
+            case _:
+                raise ValueError(f"Unknown mask type: {mask_type}")
+
         print(f"subject latent {i + 1} placed at ({top}, {left})")
 
   
@@ -317,7 +359,8 @@ import sys
 
 # Set SAM checkpoint environment variable
 if 'SAM_CHECKPOINT' not in os.environ:
-    os.environ['SAM_CHECKPOINT'] = 'models/sam_vit_b_01ec64.pth'
+    #os.environ['SAM_CHECKPOINT'] = 'models/sam_vit_b_01ec64.pth'
+    os.environ['SAM_CHECKPOINT'] = 'models/sam_vit_h_4b8939.pth'
 
 p = ImageProcessor()
 d = ImageDisplayer(1, 2)
@@ -334,7 +377,9 @@ if __name__ == "__main__":
 
     if method_name == "sam":
         process_image_sam(p, d, image_path, output_name)
-    elif method_name == "lol":
-        process_image_lol(p, d, image_path, output_name)
+    elif method_name == "lol_fade":
+        process_image_lol(p, d, image_path, output_name, mask_type="fade")
+    elif method_name == "lol_sam":
+        process_image_lol(p, d, image_path, output_name, mask_type="sam")
     elif method_name == "dod":
         process_image_dod(p, d, image_path, output_name)
