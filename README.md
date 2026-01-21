@@ -36,3 +36,44 @@ git add models/sam_vit_b_01ec64.pth
 git commit -m "Add model to LFS"
 git push origin main
 ```
+
+## Sample images
+
+### Original image
+![horse2 original](images/input/horse2.png)
+
+### DOD sample
+![horse2 dod result](images/output/horse2_dod_result.png)
+
+### SAM sample
+![horse2 sam result](images/output/horse2_sam_result.png)
+
+### LOL-FADE sample
+![horse2 lol-fade result](images/output/horse2_lol_fade_result.png)
+
+### LOL-SAM sample
+![horse2 lol-sam result](images/output/horse2_lol_sam_result.png)
+
+### Stylish effect samples
+* Method: LOL-SAM
+* Select only the main subject
+* mask = mask / 255.0 * 2
+
+![horse2 lol-sam stylish result](images/output/horse2_lol_sam_result_test_2.png)
+
+![horse1 lol-sam stylish result](images/output/horse1_lol_sam_result_test_2.png)
+
+![horse3 lol-sam stylish result](images/output/horse3_lol_sam_result_test_2.png)
+
+![cat2 lol-sam stylish result](images/output/cat2_lol_sam_result_test_2.png)
+
+![cat3 lol-sam stylish result](images/output/cat3_lol_sam_result_test_2.png)
+
+![dog1 lol-sam stylish result](images/output/dog1_lol_sam_result_test_2.png)
+
+![car1 lol-sam stylish result](images/output/car1_lol_sam_result_test_2.png)
+
+![car2 lol-sam stylish result](images/output/car2_lol_sam_result_test_2.png)
+
+![car3 lol-sam stylish result](images/output/car3_lol_sam_result_test_2.png)
+
