@@ -1,0 +1,8 @@
+accelerate
+numpy
+torch
+torchvision
+matplotlib
+pillow
+diffusers
+segment-anything

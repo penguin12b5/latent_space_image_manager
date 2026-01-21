@@ -110,7 +110,8 @@ class ImageDisplayer:
         self.figure.tight_layout()
 
     def display_plot(self):
-        plt.show()
+        #plt.show()
+        pass
         
 def tensor_to_pil(tensor):
     tensor = tensor.squeeze(0).cpu()
@@ -176,6 +177,11 @@ def get_sam_mask(image, box, sam_checkpoint, sam_model_type="vit_h", device=None
     mask_cropped = mask_pil.crop((x1, y1, x2, y2)) if mask_pil.size != (x2 - x1, y2 - y1) else mask_pil
     return mask_cropped
 
+def save_image(image, output_name):
+    output_dir = "images/output"
+    os.makedirs(output_dir, exist_ok=True)
+    image.save(f"{output_dir}/{output_name}.png")
+
 def process_image_dod(image_processor, image_displayer, image_path, output_name, scale=0.25):
     #take image and find its subjects
     image = load_image(image_path)
@@ -190,7 +196,7 @@ def process_image_dod(image_processor, image_displayer, image_path, output_name,
     #for each subject, encode + decode, 
     #then attach to the original image with blend
     for i, (subject_image, (x1, y1)) in enumerate(subjects):
-        decoded_subject = p.decode(p.encode(subject_image))
+        decoded_subject = image_processor.decode(image_processor.encode(subject_image))
         decoded_subject = tensor_to_pil(decoded_subject)
 
         w, h = decoded_subject.size
@@ -206,8 +212,7 @@ def process_image_dod(image_processor, image_displayer, image_path, output_name,
     image_displayer.display_plot()
 
     #save image
-    os.makedirs("outputs", exist_ok=True)
-    decoded_image.save(f"outputs/{output_name}.png")
+    save_image(decoded_image, output_name)
 
 def process_image_sam(image_processor, image_displayer, image_path, output_name, scale=0.25):
     #take image and find its subjects
@@ -221,6 +226,7 @@ def process_image_sam(image_processor, image_displayer, image_path, output_name,
     decoded_image = image_processor.resize_image(tensor_to_pil(decoded_image), 1 / scale)
 
     #for each subject, encode + decode, then attach to the original image with blend
+    print("number of subjects found:", len(subjects))
     for i, (subject_image, (x1, y1)) in enumerate(subjects):
         decoded_subject = image_processor.decode(image_processor.encode(subject_image))
         decoded_subject = tensor_to_pil(decoded_subject)
@@ -228,6 +234,7 @@ def process_image_sam(image_processor, image_displayer, image_path, output_name,
         # try to use SAM mask if available via environment variable SAM_CHECKPOINT
         sam_checkpoint = os.environ.get('SAM_CHECKPOINT', None)
         if sam_checkpoint:
+            print("Using SAM for mask generation")
             try:
                 mask = get_sam_mask(image, (x1, y1, x1 + subject_image.width, y1 + subject_image.height), sam_checkpoint)
             except Exception:
@@ -236,6 +243,7 @@ def process_image_sam(image_processor, image_displayer, image_path, output_name,
                 fade_px = int(0.08 * min(w, h))
                 mask = get_fade_mask(w, h, fade_px)
         else:
+            print("SAM_CHECKPOINT not set, using fade mask")
             w, h = decoded_subject.size
             fade_px = int(0.08 * min(w, h))
             mask = get_fade_mask(w, h, fade_px)
@@ -249,8 +257,7 @@ def process_image_sam(image_processor, image_displayer, image_path, output_name,
     image_displayer.display_plot()
 
     #save image
-    os.makedirs("outputs", exist_ok=True)
-    decoded_image.save(f"images/outputs/{output_name}.png")
+    save_image(decoded_image, output_name)
 
 def process_image_lol(image_processor, image_displayer, image_path, output_name, scale=0.25):
     def paste_latent(base_latent, subject_latent, top, left, fade_ratio=0.08):
@@ -303,15 +310,31 @@ def process_image_lol(image_processor, image_displayer, image_path, output_name,
     image_displayer.display_plot()
     
     #save_image
-    os.makedirs("outputs", exist_ok=True)
-    decoded_merged.save(f"outputs/{output_name}.png")
+    save_image(decoded_merged, output_name)
+
+
+import sys
+
+# Set SAM checkpoint environment variable
+if 'SAM_CHECKPOINT' not in os.environ:
+    os.environ['SAM_CHECKPOINT'] = 'models/sam_vit_b_01ec64.pth'
 
 p = ImageProcessor()
 d = ImageDisplayer(1, 2)
-process_image_sam(p, d, "images/car1.png", "car1_results")
 
-  
+if __name__ == "__main__":
+    if len(sys.argv) < 4:
+        print("Usage: python processimage.py <method_name> <image_path> <output_name_without_extension> ")
+        print("Example: python processimage.py images/car1.png car1_results sam")
+        sys.exit(1)
     
+    method_name = sys.argv[1]
+    image_path = sys.argv[2]
+    output_name = sys.argv[3]
 
-   
-
+    if method_name == "sam":
+        process_image_sam(p, d, image_path, output_name)
+    elif method_name == "lol":
+        process_image_lol(p, d, image_path, output_name)
+    elif method_name == "dod":
+        process_image_dod(p, d, image_path, output_name)
