@@ -6,3 +6,5 @@ matplotlib
 pillow
 diffusers
 segment-anything
+opencv-python 
+scikit-image
