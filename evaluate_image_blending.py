@@ -194,6 +194,14 @@ if __name__ == "__main__":
             raise FileNotFoundError(f"Original image not found: {original_path}")
 
         mask = extract_mask_grabcut(original)
+        # ensure masks output folder exists and save mask
+        out_mask_dir = os.path.join(os.path.dirname(__file__), 'results', 'masks')
+        out_mask_dir = os.path.normpath(out_mask_dir)
+        os.makedirs(out_mask_dir, exist_ok=True)
+        mask_path = os.path.join(out_mask_dir, image_name)
+        # save binary mask as 8-bit PNG (0/255)
+        cv2.imwrite(mask_path, (mask * 255).astype(np.uint8))
+        print(f"Saved GrabCut mask: {mask_path}")
 
         print(f"\nEvaluating image: {image_name}")
         scores = {}
