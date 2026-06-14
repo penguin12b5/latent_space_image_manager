@@ -1,0 +1,128 @@
+{
+  "fid": {
+    "dod_fade": 64.40591523781134,
+    "dod_sam": 62.680094764387945,
+    "lol_fade": 310.9322742620583,
+    "lol_sam": 340.23433428826263,
+    "output": null
+  },
+  "lpips": {
+    "dod_fade": 0.240207547491247,
+    "dod_sam": 0.24061278321526267,
+    "lol_fade": 0.5632195716554468,
+    "lol_sam": 0.5928471196781505,
+    "output": null
+  },
+  "iou": {
+    "dod_sam": 0.24572156919922375,
+    "lol_sam": 0.24572156919922375,
+    "dod_fade": 0.3015719838338927,
+    "lol_fade": 0.3015719838338927
+  },
+  "boundary": {
+    "dod_fade": null,
+    "dod_sam": null,
+    "lol_fade": null,
+    "lol_sam": null,
+    "output": null
+  },
+  "composite": {
+    "dod_fade": 0.7481346127412243,
+    "dod_sam": 0.7497701700228919,
+    "lol_fade": 0.29847501531567217,
+    "lol_sam": 0.25,
+    "output": null
+  },
+  "per_image_lpips": {
+    "dod_fade:car1.png": 0.168892040848732,
+    "dod_sam:car1.png": 0.16896897554397583,
+    "lol_fade:car1.png": 0.6223289966583252,
+    "lol_sam:car1.png": 0.6231781840324402,
+    "dod_fade:car2.png": 0.142478346824646,
+    "dod_sam:car2.png": 0.14250339567661285,
+    "lol_fade:car2.png": 0.6134927868843079,
+    "lol_sam:car2.png": 0.6113921403884888,
+    "dod_fade:car3.png": 0.21114790439605713,
+    "dod_sam:car3.png": 0.21125543117523193,
+    "lol_fade:car3.png": 0.5429567098617554,
+    "lol_sam:car3.png": 0.5478736162185669,
+    "dod_fade:cat1.png": 0.3582441806793213,
+    "dod_sam:cat1.png": 0.36238935589790344,
+    "lol_fade:cat1.png": 0.710350751876831,
+    "lol_sam:cat1.png": 0.7169674634933472,
+    "dod_fade:cat2.png": 0.23397283256053925,
+    "dod_sam:cat2.png": 0.23427599668502808,
+    "lol_fade:cat2.png": 0.41451138257980347,
+    "lol_sam:cat2.png": 0.5199087262153625,
+    "dod_fade:cat3.png": 0.1768243908882141,
+    "dod_sam:cat3.png": 0.17684924602508545,
+    "lol_fade:cat3.png": 0.44583991169929504,
+    "lol_sam:cat3.png": 0.5103208422660828,
+    "dod_fade:dog1.png": 0.12672945857048035,
+    "dod_sam:dog1.png": 0.12675227224826813,
+    "lol_fade:dog1.png": 0.27494972944259644,
+    "lol_sam:dog1.png": 0.29013967514038086,
+    "dod_fade:dog2.png": 0.4458698332309723,
+    "dod_sam:dog2.png": 0.4456333518028259,
+    "lol_fade:dog2.png": 0.6829010248184204,
+    "lol_sam:dog2.png": 0.7089268565177917,
+    "dod_fade:horse1.png": 0.3272295594215393,
+    "dod_sam:horse1.png": 0.3271975517272949,
+    "lol_fade:horse1.png": 0.7119654417037964,
+    "lol_sam:horse1.png": 0.7335878014564514,
+    "dod_fade:horse2.png": 0.18855580687522888,
+    "dod_sam:horse2.png": 0.1885128617286682,
+    "lol_fade:horse2.png": 0.5704656839370728,
+    "lol_sam:horse2.png": 0.6082490086555481,
+    "dod_fade:horse3.png": 0.26233866810798645,
+    "dod_sam:horse3.png": 0.26240217685699463,
+    "lol_fade:horse3.png": 0.6056528687477112,
+    "lol_sam:horse3.png": 0.6507740020751953
+  },
+  "per_image_iou": {
+    "car1.png": {
+      "sam_iou": 0.05325451673741945,
+      "fade_iou": 0.059514545771178276
+    },
+    "car2.png": {
+      "sam_iou": 0.25385116869833024,
+      "fade_iou": 0.31038838017050835
+    },
+    "car3.png": {
+      "sam_iou": 0.06395863344325789,
+      "fade_iou": 0.08592154894113492
+    },
+    "cat1.png": {
+      "sam_iou": 0.0008789081787837491,
+      "fade_iou": 0.03650670358988214
+    },
+    "cat2.png": {
+      "sam_iou": 0.6659129664697625,
+      "fade_iou": 0.7032620802245922
+    },
+    "cat3.png": {
+      "sam_iou": 0.0015594345792041852,
+      "fade_iou": 0.07213536542025606
+    },
+    "dog1.png": {
+      "sam_iou": 0.4978308570373181,
+      "fade_iou": 0.5444817939642187
+    },
+    "dog2.png": {
+      "sam_iou": 0.3611979907117809,
+      "fade_iou": 0.5204397296830813
+    },
+    "horse1.png": {
+      "sam_iou": 0.3566500882400128,
+      "fade_iou": 0.36453745506036395
+    },
+    "horse2.png": {
+      "sam_iou": 0.28165195159907264,
+      "fade_iou": 0.38512967506042567
+    },
+    "horse3.png": {
+      "sam_iou": 0.16619074549651866,
+      "fade_iou": 0.23497454428717832
+    }
+  }
+}
