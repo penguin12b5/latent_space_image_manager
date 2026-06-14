@@ -79,6 +79,36 @@ eg. `python processimage.py lol_sam images/input/car1.png car1_lol_sam_results`
 
 ![car3 lol-sam stylish result](images/output/car3_lol_sam_result_test_2.png)
 
+## How to run the stylization ablation analysis
+
+The ablation study validates the stylization effect by sweeping mask alpha values, comparing latent-space vs pixel-space scaling, and benchmarking against standard image filters.
+
+```bash
+SAM_CHECKPOINT=models/sam_vit_b_01ec64.pth python generate_stylization_ablation.py
+```
+
+If using the ViT-H SAM model instead:
+```bash
+SAM_CHECKPOINT=models/sam_vit_h_4b8939.pth python generate_stylization_ablation.py
+```
+
+### What it produces
+
+For each of the 11 benchmark images (car1-3, cat1-3, dog1-2, horse1-3):
+
+| Ablation | Description |
+|---|---|
+| Mask-scale sweep | LOL-SAM at alpha in {0.0, 0.5, 1.0, 1.5, 2.0} |
+| Pixel-space alpha>1 control | RGB scaling at alpha 1.5 and 2.0 (no latent-space involvement) |
+| Filter baselines | Unsharp mask, bilateral filter, CLAHE comparisons |
+
+### Output files
+
+- Images: `images/output/ablation/<image>_<variant>.png` (110 images total)
+- Full results: `results/stylization_ablation_results.json`
+- Summary table: `results/stylization_ablation_summary.csv`
+- Study writeup: `stylization_ablation_study.md`
+
 ## Evaluation Results
 * `images_eval` folder contains the re-organized images for the evaluation
 
