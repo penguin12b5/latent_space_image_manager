@@ -1,0 +1,314 @@
+{
+  "scheme": "equal",
+  "weights": {
+    "edge": 0.3333,
+    "smooth": 0.3333,
+    "object": 0.3333
+  },
+  "per_image": {
+    "car1.png": {
+      "DOD-FADE": {
+        "edge_blending": 0.2142,
+        "background_smoothness": 0.8565,
+        "object_preservation": 0.5508,
+        "overall": 0.5405
+      },
+      "DOD-SAM": {
+        "edge_blending": 0.2142,
+        "background_smoothness": 0.8565,
+        "object_preservation": 0.5508,
+        "overall": 0.5405
+      },
+      "LOL-FADE": {
+        "edge_blending": 0.6676,
+        "background_smoothness": 0.6726,
+        "object_preservation": 0.4587,
+        "overall": 0.5996
+      },
+      "LOL-SAM": {
+        "edge_blending": 0.6907,
+        "background_smoothness": 0.6777,
+        "object_preservation": 0.459,
+        "overall": 0.6091
+      }
+    },
+    "car2.png": {
+      "DOD-FADE": {
+        "edge_blending": 0.1118,
+        "background_smoothness": 0.8649,
+        "object_preservation": 0.6324,
+        "overall": 0.5364
+      },
+      "DOD-SAM": {
+        "edge_blending": 0.1118,
+        "background_smoothness": 0.8649,
+        "object_preservation": 0.6324,
+        "overall": 0.5364
+      },
+      "LOL-FADE": {
+        "edge_blending": 0.6485,
+        "background_smoothness": 0.7353,
+        "object_preservation": 0.3534,
+        "overall": 0.5791
+      },
+      "LOL-SAM": {
+        "edge_blending": 0.6456,
+        "background_smoothness": 0.7379,
+        "object_preservation": 0.3537,
+        "overall": 0.5791
+      }
+    },
+    "car3.png": {
+      "DOD-FADE": {
+        "edge_blending": 0.4053,
+        "background_smoothness": 0.8991,
+        "object_preservation": 0.2971,
+        "overall": 0.5338
+      },
+      "DOD-SAM": {
+        "edge_blending": 0.4053,
+        "background_smoothness": 0.8991,
+        "object_preservation": 0.2971,
+        "overall": 0.5338
+      },
+      "LOL-FADE": {
+        "edge_blending": 0.745,
+        "background_smoothness": 0.8032,
+        "object_preservation": 0.2855,
+        "overall": 0.6112
+      },
+      "LOL-SAM": {
+        "edge_blending": 0.7481,
+        "background_smoothness": 0.8039,
+        "object_preservation": 0.2868,
+        "overall": 0.6129
+      }
+    },
+    "cat1.png": {
+      "DOD-FADE": {
+        "edge_blending": 0.2467,
+        "background_smoothness": 0.8427,
+        "object_preservation": 0.2634,
+        "overall": 0.4509
+      },
+      "DOD-SAM": {
+        "edge_blending": 0.2547,
+        "background_smoothness": 0.8471,
+        "object_preservation": 0.2672,
+        "overall": 0.4563
+      },
+      "LOL-FADE": {
+        "edge_blending": 0.7152,
+        "background_smoothness": 0.7522,
+        "object_preservation": 0.2273,
+        "overall": 0.5649
+      },
+      "LOL-SAM": {
+        "edge_blending": 0.7578,
+        "background_smoothness": 0.7555,
+        "object_preservation": 0.2281,
+        "overall": 0.5804
+      }
+    },
+    "cat2.png": {
+      "DOD-FADE": {
+        "edge_blending": 0.1472,
+        "background_smoothness": 0.7472,
+        "object_preservation": 0.258,
+        "overall": 0.3841
+      },
+      "DOD-SAM": {
+        "edge_blending": 0.1472,
+        "background_smoothness": 0.7472,
+        "object_preservation": 0.258,
+        "overall": 0.3841
+      },
+      "LOL-FADE": {
+        "edge_blending": 0.1691,
+        "background_smoothness": 0.646,
+        "object_preservation": 0.3321,
+        "overall": 0.3824
+      },
+      "LOL-SAM": {
+        "edge_blending": 0.3903,
+        "background_smoothness": 0.6806,
+        "object_preservation": 0.2968,
+        "overall": 0.4559
+      }
+    },
+    "cat3.png": {
+      "DOD-FADE": {
+        "edge_blending": 0.1565,
+        "background_smoothness": 0.7753,
+        "object_preservation": 0.5547,
+        "overall": 0.4955
+      },
+      "DOD-SAM": {
+        "edge_blending": 0.1564,
+        "background_smoothness": 0.7752,
+        "object_preservation": 0.5547,
+        "overall": 0.4954
+      },
+      "LOL-FADE": {
+        "edge_blending": 0.4074,
+        "background_smoothness": 0.7203,
+        "object_preservation": 0.4935,
+        "overall": 0.5404
+      },
+      "LOL-SAM": {
+        "edge_blending": 0.6002,
+        "background_smoothness": 0.7583,
+        "object_preservation": 0.4897,
+        "overall": 0.616
+      }
+    },
+    "dog1.png": {
+      "DOD-FADE": {
+        "edge_blending": 0.5667,
+        "background_smoothness": 0.9232,
+        "object_preservation": 0.7118,
+        "overall": 0.7339
+      },
+      "DOD-SAM": {
+        "edge_blending": 0.5667,
+        "background_smoothness": 0.9232,
+        "object_preservation": 0.7118,
+        "overall": 0.7339
+      },
+      "LOL-FADE": {
+        "edge_blending": 0.7338,
+        "background_smoothness": 0.9006,
+        "object_preservation": 0.7539,
+        "overall": 0.7961
+      },
+      "LOL-SAM": {
+        "edge_blending": 0.7305,
+        "background_smoothness": 0.9007,
+        "object_preservation": 0.7509,
+        "overall": 0.794
+      }
+    },
+    "dog2.png": {
+      "DOD-FADE": {
+        "edge_blending": 0.4212,
+        "background_smoothness": 0.8847,
+        "object_preservation": 0.281,
+        "overall": 0.5289
+      },
+      "DOD-SAM": {
+        "edge_blending": 0.4212,
+        "background_smoothness": 0.8846,
+        "object_preservation": 0.281,
+        "overall": 0.5289
+      },
+      "LOL-FADE": {
+        "edge_blending": 0.6641,
+        "background_smoothness": 0.7704,
+        "object_preservation": 0.3195,
+        "overall": 0.5847
+      },
+      "LOL-SAM": {
+        "edge_blending": 0.6694,
+        "background_smoothness": 0.7695,
+        "object_preservation": 0.3262,
+        "overall": 0.5884
+      }
+    },
+    "horse1.png": {
+      "DOD-FADE": {
+        "edge_blending": 0.1023,
+        "background_smoothness": 0.8163,
+        "object_preservation": 0.4098,
+        "overall": 0.4428
+      },
+      "DOD-SAM": {
+        "edge_blending": 0.1024,
+        "background_smoothness": 0.8163,
+        "object_preservation": 0.4099,
+        "overall": 0.4428
+      },
+      "LOL-FADE": {
+        "edge_blending": 0.341,
+        "background_smoothness": 0.4189,
+        "object_preservation": 0.23,
+        "overall": 0.33
+      },
+      "LOL-SAM": {
+        "edge_blending": 0.6037,
+        "background_smoothness": 0.4517,
+        "object_preservation": 0.2222,
+        "overall": 0.4259
+      }
+    },
+    "horse2.png": {
+      "DOD-FADE": {
+        "edge_blending": 0.2486,
+        "background_smoothness": 0.8524,
+        "object_preservation": 0.5733,
+        "overall": 0.5581
+      },
+      "DOD-SAM": {
+        "edge_blending": 0.2487,
+        "background_smoothness": 0.8524,
+        "object_preservation": 0.5732,
+        "overall": 0.5581
+      },
+      "LOL-FADE": {
+        "edge_blending": 0.5634,
+        "background_smoothness": 0.7825,
+        "object_preservation": 0.5005,
+        "overall": 0.6155
+      },
+      "LOL-SAM": {
+        "edge_blending": 0.7135,
+        "background_smoothness": 0.8222,
+        "object_preservation": 0.5148,
+        "overall": 0.6835
+      }
+    },
+    "horse3.png": {
+      "DOD-FADE": {
+        "edge_blending": 0.2511,
+        "background_smoothness": 0.8678,
+        "object_preservation": 0.4933,
+        "overall": 0.5374
+      },
+      "DOD-SAM": {
+        "edge_blending": 0.2512,
+        "background_smoothness": 0.8678,
+        "object_preservation": 0.4934,
+        "overall": 0.5375
+      },
+      "LOL-FADE": {
+        "edge_blending": 0.5083,
+        "background_smoothness": 0.668,
+        "object_preservation": 0.3439,
+        "overall": 0.5067
+      },
+      "LOL-SAM": {
+        "edge_blending": 0.7677,
+        "background_smoothness": 0.7,
+        "object_preservation": 0.3421,
+        "overall": 0.6033
+      }
+    }
+  },
+  "averages": {
+    "DOD-FADE": 0.522,
+    "DOD-SAM": 0.5225,
+    "LOL-FADE": 0.5555,
+    "LOL-SAM": 0.5953
+  },
+  "ranking": [
+    "LOL-SAM",
+    "LOL-FADE",
+    "DOD-SAM",
+    "DOD-FADE"
+  ],
+  "wins_per_method": {
+    "DOD-FADE": 1,
+    "DOD-SAM": 1,
+    "LOL-FADE": 2,
+    "LOL-SAM": 9
+  }
+}
