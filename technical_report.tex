@@ -1,0 +1,601 @@
+\documentclass[11pt,a4paper]{article}
+
+% --- Encoding & Language ---
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage[english]{babel}
+
+% --- Page Geometry ---
+\usepackage[margin=1in]{geometry}
+
+% --- Typography ---
+\usepackage{microtype}
+\usepackage{tgtermes}
+\renewcommand{\familydefault}{\rmdefault}
+
+% --- Math ---
+\usepackage{amsmath}
+\usepackage{amssymb}
+
+% --- Tables ---
+\usepackage{booktabs}
+\usepackage{tabularx}
+\usepackage{longtable}
+\usepackage{array}
+
+% --- Code listings ---
+\usepackage{listings}
+\usepackage{xcolor}
+
+\definecolor{codebg}{HTML}{F5F5F5}
+\definecolor{codeframe}{HTML}{CCCCCC}
+\definecolor{keyword}{HTML}{0000FF}
+\definecolor{comment}{HTML}{008000}
+\definecolor{string}{HTML}{A31515}
+
+\lstset{
+  backgroundcolor=\color{codebg},
+  frame=single,
+  rulecolor=\color{codeframe},
+  basicstyle=\ttfamily\small,
+  keywordstyle=\color{keyword}\bfseries,
+  commentstyle=\color{comment}\itshape,
+  stringstyle=\color{string},
+  breaklines=true,
+  breakatwhitespace=true,
+  tabsize=4,
+  showstringspaces=false,
+  numbers=none,
+  xleftmargin=4pt,
+  xrightmargin=4pt,
+  aboveskip=8pt,
+  belowskip=8pt,
+}
+
+\lstdefinestyle{bash}{
+  language=bash,
+  morekeywords={python,SAM_CHECKPOINT},
+}
+
+\lstdefinestyle{python}{
+  language=Python,
+  morekeywords={self,None,True,False},
+}
+
+% --- Links ---
+\usepackage[colorlinks=true,linkcolor=blue!60!black,citecolor=blue!60!black,urlcolor=blue!60!black]{hyperref}
+
+% --- Graphics ---
+\usepackage{graphicx}
+
+% --- Lists ---
+\usepackage{enumitem}
+\setlist[itemize]{topsep=4pt, itemsep=2pt, parsep=0pt}
+\setlist[enumerate]{topsep=4pt, itemsep=2pt, parsep=0pt}
+
+% --- Header/Footer ---
+\usepackage{fancyhdr}
+\pagestyle{fancy}
+\fancyhf{}
+\fancyhead[L]{\small Technical Report}
+\fancyhead[R]{\small Object-Aware Image Reconstruction Pipeline}
+\fancyfoot[C]{\thepage}
+\renewcommand{\headrulewidth}{0.4pt}
+
+% --- Title ---
+\title{\textbf{Technical Report: Implementation of the\\Object-Aware Image Reconstruction Pipeline}\\[12pt]
+\large Accompanying: \textit{Object-Aware Image Reconstruction: Comparative Strategies\\for Selective Enhancement in Latent Diffusion Models}}
+
+\author{
+  Oliver Tong\\
+  \small Horace Mann School, Bronx, NY\\
+  \small \texttt{oliver\_tong@horacemann.org}
+  \and
+  Greg Shakhnarovich\\
+  \small Toyota Technological Institute at Chicago\\
+  \small \texttt{greg@ttic.edu}
+}
+
+\date{June 2026}
+
+\begin{document}
+
+\maketitle
+
+\begin{abstract}
+This technical report documents the software implementation of the object-aware image reconstruction framework. The codebase consists of seven Python scripts that implement four reconstruction methods (DOD-FADE, DOD-SAM, LOL-FADE, LOL-SAM), compute quantitative evaluation metrics, and generate ablation analyses for the stylization phenomenon. We describe each script's role, its algorithmic mechanics, inter-script dependencies, and provide instructions for reproducing all results reported in the accompanying paper.
+\end{abstract}
+
+\tableofcontents
+\newpage
+
+% ============================================================================
+\section{Overview}
+
+The repository implements the complete experimental framework for object-aware image reconstruction using latent diffusion models. The codebase is organized into seven scripts, each responsible for a distinct phase of the pipeline:
+
+\begin{table}[h]
+\centering
+\small
+\caption{Repository script inventory.}
+\label{tab:scripts}
+\begin{tabularx}{\textwidth}{lX}
+\toprule
+\textbf{Script} & \textbf{Purpose} \\
+\midrule
+\texttt{processimage.py} & Core reconstruction pipeline (all 4 methods) \\
+\texttt{evaluate\_image\_blending.py} & Per-image composite quality evaluation ($Q_{\text{img}}$) \\
+\texttt{eval\_metrics.py} & Aggregate metrics (FID, LPIPS) computation \\
+\texttt{compute\_iou\_direct.py} & IoU between method masks and GrabCut reference \\
+\texttt{augment\_metrics\_with\_masks.py} & Boundary energy and background smoothness augmentation \\
+\texttt{evaluate\_weight\_sensitivity.py} & Weight sensitivity robustness analysis \\
+\texttt{generate\_stylization\_ablation.py} & Stylization ablation study \\
+\bottomrule
+\end{tabularx}
+\end{table}
+
+% ============================================================================
+\section{Core Reconstruction Pipeline: \texttt{processimage.py}}
+
+\subsection{Architecture}
+
+The core pipeline is implemented via two primary classes and a set of free functions.
+
+\subsubsection{ImageProcessor Class}
+
+Encapsulates model loading and inference:
+\begin{itemize}
+  \item \textbf{Object detection}: Faster R-CNN with ResNet-50-FPN backbone (torchvision pretrained weights), confidence threshold $\tau = 0.8$.
+  \item \textbf{VAE}: Stable Diffusion v1.4 \texttt{AutoencoderKL} loaded from local \texttt{./models} directory via the \texttt{diffusers} library. Provides \texttt{encode()} and \texttt{decode()} methods that map between pixel space $\mathbb{R}^{H \times W \times 3}$ and latent space $\mathbb{R}^{4 \times h \times w}$ where $(h, w) = (H/8, W/8)$.
+  \item \textbf{Device selection}: Automatic CUDA/CPU selection at initialization.
+\end{itemize}
+
+\subsubsection{ImageDisplayer Class}
+
+Provides matplotlib-based visualization for side-by-side comparison of original and reconstructed images. Configurable grid layout via \texttt{rows} and \texttt{cols} parameters.
+
+\subsubsection{Key Free Functions}
+
+\begin{itemize}
+  \item \texttt{get\_fade\_mask(width, height, fade\_px)}: Generates a heuristic edge-distance alpha mask in pixel space using:
+  \begin{equation}
+    \alpha(x,y) = \left[\text{clip}\left(\frac{d_{\text{edge}}(x,y)}{r_{\text{fade}}},\; 0,\; 1\right)\right]^{1.5}
+  \end{equation}
+
+  \item \texttt{get\_fade\_mask\_latent(width, height, fade\_px, device)}: PyTorch tensor version of the fade mask for latent-space operations.
+
+  \item \texttt{get\_sam\_mask(image, box, sam\_checkpoint, sam\_model\_type, device)}: Runs SAM inference using the specified bounding box as a prompt. Auto-detects model type from checkpoint filename (\texttt{vit\_h} vs \texttt{vit\_b}).
+
+  \item \texttt{tensor\_to\_pil(tensor)}: Converts a VAE output tensor (range $[-1, 1]$) to a PIL Image (range $[0, 255]$) via:
+  \begin{equation}
+    I_{\text{pixel}} = \frac{\text{clamp}(z, -1, 1) + 1}{2} \times 255
+  \end{equation}
+\end{itemize}
+
+\subsection{Method Implementations}
+
+\subsubsection{DOD-FADE: \texttt{process\_image\_dod()}}
+
+Implements pixel-space reconstruction with fade-mask blending:
+
+\begin{enumerate}
+  \item \textbf{Background synthesis}: The input image is downscaled by factor 0.25, encoded into latent space, decoded back, then upscaled to original resolution. The encode-decode cycle induces smoothing.
+  \item \textbf{Subject extraction}: Faster R-CNN detects objects; each ROI is cropped, independently encoded and decoded.
+  \item \textbf{Compositing}: Each decoded subject is pasted onto the background using a fade mask (8\% of minimum ROI dimension as the fade radius, power exponent 1.5). PIL's \texttt{Image.paste()} performs the alpha compositing.
+\end{enumerate}
+
+\subsubsection{DOD-SAM: \texttt{process\_image\_sam()}}
+
+Identical to DOD-FADE except the mask is generated by SAM rather than the heuristic fade function. SAM is invoked with the bounding box as a prompt (\texttt{multimask\_output=False}). Falls back to fade mask if the \texttt{SAM\_CHECKPOINT} environment variable is unset or SAM inference fails.
+
+\subsubsection{LOL-FADE and LOL-SAM: \texttt{process\_image\_lol()}}
+
+Implements latent-space blending via the \texttt{mask\_type} parameter (\texttt{"fade"} or \texttt{"sam"}):
+
+\begin{enumerate}
+  \item \textbf{Latent background}: Input is downscaled by 0.25, encoded to latent, then the latent is upscaled back to full latent resolution $(64 \times 64)$ using \texttt{F.interpolate} with bilinear mode:
+  \begin{equation}
+    z_{\text{bg,interp}} = \text{Resize}(E(\text{Downscale}(I, 0.25)),\; (64, 64))
+  \end{equation}
+
+  \item \textbf{Subject encoding}: Each detected ROI is cropped and encoded directly (without downscaling), producing a subject latent on the same grid:
+  \begin{equation}
+    z_j = E(\text{Crop}(I, B_j))
+  \end{equation}
+
+  \item \textbf{Latent blending}:
+  \begin{itemize}
+    \item \textbf{FADE mode}: Generates a fade mask at latent resolution and blends:
+    \begin{equation}
+      z_{\text{merged}} = z_{\text{bg}} \cdot (1 - M_{\text{fade}}) + z_j \cdot M_{\text{fade}}
+    \end{equation}
+
+    \item \textbf{SAM mode}: SAM produces a pixel-space mask, which is downsampled to latent resolution via bilinear interpolation, normalized to $[0, 1]$, then used for the same linear blend:
+    \begin{equation}
+      z_{\text{merged}} = z_{\text{bg}} \cdot (1 - M_{\text{SAM}}^{\text{lat}}) + z_j \cdot M_{\text{SAM}}^{\text{lat}}
+    \end{equation}
+  \end{itemize}
+
+  \item \textbf{Decoding}: The merged latent is decoded to pixel space in a single pass: $I_{\text{final}} = D(z_{\text{merged}})$.
+\end{enumerate}
+
+Key implementation detail: coordinate mapping uses integer division by 8 (\texttt{y1 // 8}, \texttt{x1 // 8}) to convert pixel-space bounding box positions to latent-space positions.
+
+\subsection{Subject Tiling}
+
+The \texttt{find\_subjects()} method handles large objects that exceed configurable \texttt{max\_width}/\texttt{max\_height} thresholds (default 1000 pixels) by splitting them into tiles. For an object of width $w$ and height $h$:
+\begin{align}
+  h_{\text{splits}} &= \lceil w / \text{max\_width} \rceil \\
+  v_{\text{splits}} &= \lceil h / \text{max\_height} \rceil
+\end{align}
+Each tile is processed independently, ensuring stable VAE encoding regardless of object size.
+
+\subsection{Command-Line Interface}
+
+\begin{lstlisting}[style=bash]
+python processimage.py <method> <image_path> <output_name>
+\end{lstlisting}
+
+Where \texttt{<method>} is one of: \texttt{dod}, \texttt{sam}, \texttt{lol\_fade}, \texttt{lol\_sam}.
+
+% ============================================================================
+\section{Per-Image Composite Quality Evaluation: \texttt{evaluate\_image\_blending.py}}
+
+\subsection{Metric Components}
+
+This script implements the per-image $Q_{\text{img}}$ metric:
+\begin{equation}
+  Q_{\text{img}} = 0.45 \cdot E + 0.35 \cdot B + 0.20 \cdot O
+\end{equation}
+
+\paragraph{Edge Blending Score ($E$).}
+Computes Sobel gradient magnitude across the boundary band (4-pixel morphological dilation minus erosion) and applies exponential decay:
+\begin{equation}
+  E = \exp\left(-\frac{\bar{g}_{\text{band}}}{50}\right)
+\end{equation}
+where $\bar{g}_{\text{band}}$ is the mean gradient within the boundary band. Score range $[0, 1]$; higher indicates smoother boundary transitions.
+
+\paragraph{Background Smoothness Score ($B$).}
+Computes the Laplacian of the grayscale image restricted to the background region:
+\begin{equation}
+  B = \exp\left(-\frac{\overline{|\nabla^2 I|}_{\text{bg}}}{30}\right)
+\end{equation}
+Higher values indicate fewer high-frequency artifacts in the background.
+
+\paragraph{Object Preservation Score ($O$).}
+Computes SSIM between the original and reconstructed image, restricted to the bounding box of the foreground mask. Uses \texttt{skimage.metrics.structural\_similarity}.
+
+\subsection{Mask Extraction}
+
+Rather than using the method's own mask, this script generates an independent reference mask using \textbf{GrabCut} (\texttt{cv2.GC\_INIT\_WITH\_RECT} mode). A 5\% border is treated as background prior, and 5 iterations are run. The binary mask is thresholded on \texttt{GC\_FGD | GC\_PR\_FGD}.
+
+\subsection{Evaluation Loop}
+
+The script evaluates all four methods across the 11 benchmark images (\texttt{car1-3}, \texttt{cat1-3}, \texttt{dog1-2}, \texttt{horse1-3}), prints per-image scores, and identifies the winner for each image.
+
+% ============================================================================
+\section{Aggregate Metrics: \texttt{eval\_metrics.py}}
+
+\subsection{FID Computation}
+
+Uses a ResNet-50 feature extractor (avgpool features, 2048-dimensional) rather than the standard Inception-v3 network. Feature vectors are collected across all images per method, and FID is computed as:
+\begin{equation}
+  \text{FID} = \|\mu_1 - \mu_2\|^2 + \text{Tr}\left(\Sigma_1 + \Sigma_2 - 2(\Sigma_1 \Sigma_2)^{1/2}\right)
+\end{equation}
+The covariance matrix square root is computed via \texttt{scipy.linalg.sqrtm}. With only 11 images, FID estimates are inherently high-variance due to rank-deficient covariance estimation.
+
+\subsection{LPIPS Computation}
+
+Preferentially uses the \texttt{lpips} package with VGG backbone when available. Falls back to a VGG-16 perceptual distance (MSE in feature space at layer 16) if the package is not installed. Images are resized to $256 \times 256$ and normalized to $[-1, 1]$ for computation.
+
+\subsection{Outputs}
+
+\begin{itemize}
+  \item \texttt{results/metrics.json}: All metric values in JSON format.
+  \item \texttt{results/per\_image\_metrics.csv}: Per-image LPIPS values.
+  \item \texttt{results/quant\_table.tex}: \LaTeX{} snippet for direct inclusion in the paper.
+\end{itemize}
+
+% ============================================================================
+\section{IoU Computation: \texttt{compute\_iou\_direct.py}}
+
+\subsection{Mask Generation}
+
+For each image, the script:
+\begin{enumerate}
+  \item Runs Faster R-CNN to obtain the top-confidence bounding box.
+  \item Generates a \textbf{SAM mask} by running full SAM inference (ViT-H by default) with the bounding box as prompt.
+  \item Generates a \textbf{FADE mask} using the same heuristic as \texttt{processimage.py} and binarizes it at the 127 threshold.
+\end{enumerate}
+
+\subsection{IoU Calculation}
+
+Both masks are placed into full-image-resolution arrays using \texttt{paste\_roi\_mask()}, which handles coordinate clamping and size mismatches. IoU is computed against ground-truth masks stored in \texttt{images/masks/}:
+\begin{equation}
+  \text{IoU} = \frac{|A \cap B|}{|A \cup B|}
+\end{equation}
+The same IoU value is reported for DOD-SAM and LOL-SAM (identical mask), and for DOD-FADE and LOL-FADE (identical mask).
+
+% ============================================================================
+\section{Boundary Energy Augmentation: \texttt{augment\_metrics\_with\_masks.py}}
+
+This script augments the \texttt{metrics.json} file with three additional per-method metrics computed using pre-generated binary masks in \texttt{images/masks/}:
+
+\begin{itemize}
+  \item \textbf{Boundary Energy}: Mean gradient magnitude within a 4-pixel morphological boundary band. Reported as raw RMSE value (not exponentially decayed).
+  \item \textbf{Background Laplacian}: Mean absolute Laplacian in the background region (raw high-frequency energy).
+  \item \textbf{Object SSIM}: Structural similarity restricted to the object bounding box.
+\end{itemize}
+
+It also regenerates the \LaTeX{} table snippet with the updated values.
+
+% ============================================================================
+\section{Weight Sensitivity Analysis: \texttt{evaluate\_weight\_sensitivity.py}}
+
+\subsection{Design}
+
+Tests robustness of the LOL-SAM $>$ LOL-FADE conclusion under three weighting schemes:
+
+\begin{table}[h]
+\centering
+\small
+\caption{Weighting schemes for sensitivity analysis.}
+\begin{tabular}{lccc}
+\toprule
+\textbf{Scheme} & \textbf{Edge} & \textbf{Smoothness} & \textbf{Object Preservation} \\
+\midrule
+Original & 0.45 & 0.35 & 0.20 \\
+Equal & 0.333 & 0.333 & 0.333 \\
+Edge-only & 1.0 & 0.0 & 0.0 \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\subsection{Implementation}
+
+Imports the metric functions directly from \texttt{evaluate\_image\_blending.py} and re-computes composite scores under each weighting scheme. For each scheme, reports:
+\begin{itemize}
+  \item Per-image scores and winners.
+  \item Method averages and ranking.
+  \item Per-image win counts (out of 11).
+\end{itemize}
+
+\subsection{Key Result}
+
+LOL-SAM wins 9/11 images under all three schemes, confirming that the preference is not an artifact of the weight distribution. The advantage over LOL-FADE actually strengthens under edge-only evaluation (mean difference widens from 0.052 to 0.088).
+
+% ============================================================================
+\section{Stylization Ablation Study: \texttt{generate\_stylization\_ablation.py}}
+
+\subsection{Purpose}
+
+Validates the paper's third contribution: that mask-alpha extrapolation beyond $[0, 1]$ produces controlled artistic stylization via VAE decoder saturation.
+
+\subsection{Ablation Components}
+
+\paragraph{Mask-scale sweep.}
+Runs LOL-SAM at $s_\alpha \in \{0.0, 0.5, 1.0, 1.5, 2.0\}$. The key modification:
+\begin{lstlisting}[style=python]
+mask_tensor = mask_tensor / 255.0 * alpha  # alpha > 1 extrapolates
+\end{lstlisting}
+This pushes latent activations beyond the training distribution of the VAE decoder.
+
+\paragraph{Latent statistics.}
+For each $s_\alpha$, records the distribution of latent values immediately before decoding: mean, standard deviation, skewness, min/max, fraction outside $|z| > 1$, and fraction outside $|z| > 3$.
+
+\paragraph{Pixel-space $\alpha > 1$ control.}
+Multiplies RGB values by $s_\alpha$ directly (with clamping to $[0, 255]$), composited with a SAM mask. Tests whether simple pixel scaling reproduces the latent stylization effect.
+
+\paragraph{Filter baselines.}
+Applies unsharp masking, bilateral filtering, and CLAHE to the entire image for comparison.
+
+\subsection{Stylization Strength Metric}
+
+Each output variant is evaluated using a stylization strength metric:
+\begin{equation}
+  \text{Stylization} = \frac{\overline{|\nabla^2 I|}_{\text{fg, result}}}{\overline{|\nabla^2 I|}_{\text{fg, original}}}
+\end{equation}
+where $\overline{|\nabla^2 I|}$ is the mean absolute Laplacian (high-frequency energy) restricted to the foreground region. Values $> 1$ indicate increased texture relative to the original.
+
+\subsection{Outputs}
+
+\begin{itemize}
+  \item 110 ablation images in \texttt{images\_ablation\_study/}.
+  \item Full per-image results in \texttt{results/stylization\_ablation\_results.json}.
+  \item Aggregated CSV summary in \texttt{results/stylization\_ablation\_summary.csv}.
+\end{itemize}
+
+% ============================================================================
+\section{Dependencies and Environment}
+
+\subsection{Python Dependencies}
+
+\begin{table}[h]
+\centering
+\small
+\caption{Required Python packages.}
+\begin{tabularx}{\textwidth}{llX}
+\toprule
+\textbf{Package} & \textbf{Version} & \textbf{Purpose} \\
+\midrule
+\texttt{torch} & $\geq$ 1.13 & Tensor computation, model inference \\
+\texttt{torchvision} & $\geq$ 0.14 & Faster R-CNN, transforms \\
+\texttt{diffusers} & 0.4.2 & Stable Diffusion VAE (AutoencoderKL) \\
+\texttt{segment-anything} & $\geq$ 1.0 & SAM segmentation \\
+\texttt{Pillow} & $\geq$ 9.0 & Image I/O \\
+\texttt{numpy} & $\geq$ 1.21 & Array operations \\
+\texttt{opencv-python} & $\geq$ 4.5 & GrabCut, gradient computation \\
+\texttt{scikit-image} & $\geq$ 0.19 & SSIM metric \\
+\texttt{scipy} & $\geq$ 1.7 & FID matrix square root \\
+\texttt{matplotlib} & $\geq$ 3.5 & Visualization \\
+\texttt{lpips} & $\geq$ 0.1 & Perceptual similarity (optional) \\
+\bottomrule
+\end{tabularx}
+\end{table}
+
+\subsection{Model Weights}
+
+\begin{table}[h]
+\centering
+\small
+\caption{Pretrained model weights.}
+\begin{tabularx}{\textwidth}{lXl}
+\toprule
+\textbf{Model} & \textbf{File} & \textbf{License} \\
+\midrule
+SD VAE v1.4 & \texttt{models/diffusion\_pytorch\_model.bin} & CreativeML Open RAIL-M \\
+SAM ViT-H & \texttt{models/sam\_vit\_h\_4b8939.pth} & Apache 2.0 \\
+SAM ViT-B & \texttt{models/sam\_vit\_b\_01ec64.pth} & Apache 2.0 \\
+Faster R-CNN & torchvision hub (auto-downloaded) & BSD 3-Clause \\
+\bottomrule
+\end{tabularx}
+\end{table}
+
+Model files are tracked via Git LFS. Run \texttt{git lfs pull} after cloning.
+
+\subsection{Environment Variables}
+
+\begin{table}[h]
+\centering
+\small
+\begin{tabularx}{\textwidth}{llX}
+\toprule
+\textbf{Variable} & \textbf{Default} & \textbf{Purpose} \\
+\midrule
+\texttt{SAM\_CHECKPOINT} & \texttt{models/sam\_vit\_h\_4b8939.pth} & Path to SAM model weights \\
+\bottomrule
+\end{tabularx}
+\end{table}
+
+% ============================================================================
+\section{Reproduction Instructions}
+
+\subsection{Generate Reconstruction Outputs (All 4 Methods)}
+
+\begin{lstlisting}[style=bash]
+# DOD-FADE
+python processimage.py dod images/input/car1.png car1_dod_fade_result
+
+# DOD-SAM
+python processimage.py sam images/input/car1.png car1_dod_sam_result
+
+# LOL-FADE
+python processimage.py lol_fade images/input/car1.png car1_lol_fade_result
+
+# LOL-SAM
+python processimage.py lol_sam images/input/car1.png car1_lol_sam_result
+\end{lstlisting}
+
+\subsection{Run Per-Image Evaluation}
+
+\begin{lstlisting}[style=bash]
+python evaluate_image_blending.py
+\end{lstlisting}
+Requires \texttt{images\_eval/} directory with subdirectories: \texttt{input/}, \texttt{dod\_fade/}, \texttt{dod\_sam/}, \texttt{lol\_fade/}, \texttt{lol\_sam/}.
+
+\subsection{Compute Aggregate Metrics}
+
+\begin{lstlisting}[style=bash]
+python eval_metrics.py
+python compute_iou_direct.py
+python augment_metrics_with_masks.py
+\end{lstlisting}
+
+\subsection{Weight Sensitivity Analysis}
+
+\begin{lstlisting}[style=bash]
+python evaluate_weight_sensitivity.py
+\end{lstlisting}
+
+\subsection{Stylization Ablation}
+
+\begin{lstlisting}[style=bash]
+SAM_CHECKPOINT=models/sam_vit_h_4b8939.pth python generate_stylization_ablation.py
+\end{lstlisting}
+
+% ============================================================================
+\section{Design Decisions and Known Limitations}
+
+\subsection{Design Decisions}
+
+\begin{enumerate}
+  \item \textbf{Module-level model instantiation}: \texttt{processimage.py} instantiates \texttt{ImageProcessor} and \texttt{ImageDisplayer} at import time (lines 370--371). This was chosen for interactive notebook usage but causes side effects when importing the module. The ablation script (\texttt{generate\_stylization\_ablation.py}) reimplements the classes to avoid this.
+
+  \item \textbf{Coordinate mapping via integer division}: The pixel-to-latent mapping \texttt{y1 // 8} introduces up to 7 pixels of alignment error. This is acceptable given the VAE's $8\times$ downsampling, which already blurs spatial boundaries.
+
+  \item \textbf{SAM fallback to FADE}: The DOD-SAM method gracefully degrades to fade-mask blending if SAM is unavailable, ensuring the pipeline remains functional without GPU-intensive segmentation.
+
+  \item \textbf{GrabCut as reference}: The evaluation uses GrabCut rather than manually annotated masks as the segmentation reference. This keeps evaluation fully automatic but means IoU measures inter-method agreement rather than absolute accuracy.
+\end{enumerate}
+
+\subsection{Known Limitations}
+
+\begin{enumerate}
+  \item \textbf{No batch processing}: Each image is processed independently; models are not shared across invocations in CLI mode (though they persist in module-level instances for scripted use).
+
+  \item \textbf{Fixed hyperparameters}: The fade radius (8\%), power exponent (1.5), and detection threshold (0.8) are hardcoded. The paper justifies these choices empirically but does not expose them as CLI arguments.
+
+  \item \textbf{Single-object priority in IoU}: \texttt{compute\_iou\_direct.py} uses only the highest-confidence detection for IoU computation, while \texttt{processimage.py} processes all detections above threshold.
+
+  \item \textbf{Memory}: SAM ViT-H requires approximately 2.5\,GB of VRAM. The pipeline will OOM on GPUs with less than 4\,GB when processing multiple subjects simultaneously.
+\end{enumerate}
+
+% ============================================================================
+\section{Script Dependency Graph}
+
+The following diagram shows the inter-script dependencies:
+
+\begin{verbatim}
+processimage.py  (standalone -- core pipeline)
+     |
+     v
+evaluate_image_blending.py  (imports nothing from processimage)
+     |
+     v
+evaluate_weight_sensitivity.py  (imports from evaluate_image_blending)
+
+eval_metrics.py  (standalone -- FID/LPIPS)
+     |
+     v
+augment_metrics_with_masks.py  (reads metrics.json, augments it)
+
+compute_iou_direct.py  (standalone -- reimplements detection + masking)
+
+generate_stylization_ablation.py  (reimplements pipeline classes)
+\end{verbatim}
+
+% ============================================================================
+\section{Correspondence Between Code and Paper Equations}
+
+Table~\ref{tab:correspondence} maps each equation in the paper to its implementation location.
+
+\begin{table}[h]
+\centering
+\small
+\caption{Paper equation to code correspondence.}
+\label{tab:correspondence}
+\begin{tabularx}{\textwidth}{lX}
+\toprule
+\textbf{Paper Equation} & \textbf{Code Location} \\
+\midrule
+Eq.~1: $z = E(I)$ & \texttt{ImageProcessor.encode()} (line 66) \\
+Eq.~2: $I' = D(z)$ & \texttt{ImageProcessor.decode()} (line 77) \\
+Eq.~5: $d_{\text{edge}}$ & \texttt{get\_fade\_mask()} (lines 125--133) \\
+Eq.~6: $M_{\text{FADE}}$ & \texttt{get\_fade\_mask()} (lines 136--138) \\
+Eq.~7: Alpha compositing & \texttt{process\_image\_dod()} (line 210, \texttt{PIL.paste}) \\
+Eq.~8: SAM mask generation & \texttt{get\_sam\_mask()} (lines 160--182) \\
+Eqs.~10--12: Latent background & \texttt{process\_image\_lol()} (lines 312--319) \\
+Eq.~14: Latent masking & \texttt{paste\_latend\_with\_fade()} (line 279) \\
+Eq.~15: Latent integration & \texttt{paste\_latend\_with\_sam()} (lines 300--303) \\
+Eq.~16: Final decode & \texttt{process\_image\_lol()} (line 352) \\
+$Q_{\text{img}}$ composite & \texttt{evaluate\_method()} (lines 161--162) \\
+\bottomrule
+\end{tabularx}
+\end{table}
+
+% ============================================================================
+\section{Summary}
+
+This codebase implements a complete experimental framework for object-aware image reconstruction using latent diffusion models. The modular design separates reconstruction (generation) from evaluation (analysis), enabling independent verification of reported results. All quantitative claims in the paper---including per-image composite quality scores, aggregate metrics, weight sensitivity analysis, and stylization ablation results---can be reproduced by running the scripts in the order described in Section~10.
+
+\end{document}
