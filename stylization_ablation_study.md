@@ -59,7 +59,7 @@ For latent-space methods only, additional latent activation statistics are recor
 
 ### 1. Mask-scale sweep (`run_lol_sam_with_alpha`)
 
-Mirrors the LOL-SAM pipeline from `processimage.py`. For each alpha in {0.0, 0.5, 1.0, 1.5, 2.0}, the SAM mask is normalized and then scaled:
+Mirrors the LOL-SAM pipeline from `process_image.py`. For each alpha in {0.0, 0.5, 1.0, 1.5, 2.0}, the SAM mask is normalized and then scaled:
 
 ```
 mask = mask / 255.0 * alpha

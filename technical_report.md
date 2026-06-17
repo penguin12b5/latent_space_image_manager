@@ -16,7 +16,7 @@ The repository is organized as follows:
 
 | Script | Purpose |
 |--------|---------|
-| `processimage.py` | Core reconstruction pipeline (all 4 methods) |
+| `process_image.py` | Core reconstruction pipeline (all 4 methods) |
 | `evaluate_image_blending.py` | Per-image composite quality evaluation ($Q_{\text{img}}$) |
 | `eval_metrics.py` | Aggregate metrics (FID, LPIPS) computation |
 | `compute_iou_direct.py` | IoU between method masks and GrabCut reference |
@@ -26,7 +26,7 @@ The repository is organized as follows:
 
 ---
 
-## 2. Core Reconstruction Pipeline: `processimage.py`
+## 2. Core Reconstruction Pipeline: `process_image.py`
 
 ### 2.1 Architecture
 
@@ -79,7 +79,7 @@ The `find_subjects()` method handles large objects that exceed configurable `max
 ### 2.4 Command-Line Interface
 
 ```bash
-python processimage.py <method> <image_path> <output_name>
+python process_image.py <method> <image_path> <output_name>
 ```
 
 Where `<method>` is one of: `dod`, `sam`, `lol_fade`, `lol_sam`.
@@ -147,7 +147,7 @@ Preferentially uses the `lpips` package with VGG backbone when available. Falls 
 For each image, the script:
 1. Runs Faster R-CNN to obtain the top-confidence bounding box.
 2. Generates a **SAM mask** by running full SAM inference (ViT-H by default) with the bounding box as prompt.
-3. Generates a **FADE mask** using the same heuristic as `processimage.py` and binarizes it at the 127 threshold.
+3. Generates a **FADE mask** using the same heuristic as `process_image.py` and binarizes it at the 127 threshold.
 
 ### 5.2 IoU Calculation
 
@@ -275,16 +275,16 @@ Model files are tracked via Git LFS. Run `git lfs pull` after cloning.
 
 ```bash
 # DOD-FADE
-python processimage.py dod images/input/car1.png car1_dod_fade_result
+python process_image.py dod images/input/car1.png car1_dod_fade_result
 
 # DOD-SAM
-python processimage.py sam images/input/car1.png car1_dod_sam_result
+python process_image.py sam images/input/car1.png car1_dod_sam_result
 
 # LOL-FADE
-python processimage.py lol_fade images/input/car1.png car1_lol_fade_result
+python process_image.py lol_fade images/input/car1.png car1_lol_fade_result
 
 # LOL-SAM
-python processimage.py lol_sam images/input/car1.png car1_lol_sam_result
+python process_image.py lol_sam images/input/car1.png car1_lol_sam_result
 ```
 
 ### 10.2 Run Per-Image Evaluation
@@ -321,7 +321,7 @@ SAM_CHECKPOINT=models/sam_vit_h_4b8939.pth python generate_stylization_ablation.
 
 ### 11.1 Design Decisions
 
-1. **Module-level model instantiation**: `processimage.py` instantiates `ImageProcessor` and `ImageDisplayer` at import time (lines 370-371). This was chosen for interactive notebook usage but causes side effects when importing the module (e.g., `generate_stylization_ablation.py` reimplements the classes to avoid this).
+1. **Module-level model instantiation**: `process_image.py` instantiates `ImageProcessor` and `ImageDisplayer` at import time (lines 370-371). This was chosen for interactive notebook usage but causes side effects when importing the module (e.g., `generate_stylization_ablation.py` reimplements the classes to avoid this).
 
 2. **Coordinate mapping via integer division**: The pixel-to-latent mapping `y1 // 8` introduces up to 7 pixels of alignment error. This is acceptable given the VAE's 8x downsampling, which already blurs spatial boundaries.
 
@@ -335,7 +335,7 @@ SAM_CHECKPOINT=models/sam_vit_h_4b8939.pth python generate_stylization_ablation.
 
 2. **Fixed hyperparameters**: The fade radius (8%), power exponent (1.5), and detection threshold (0.8) are hardcoded. The paper justifies these choices empirically but does not expose them as CLI arguments.
 
-3. **Single-object priority in IoU**: `compute_iou_direct.py` uses only the highest-confidence detection for IoU computation, while `processimage.py` processes all detections above threshold.
+3. **Single-object priority in IoU**: `compute_iou_direct.py` uses only the highest-confidence detection for IoU computation, while `process_image.py` processes all detections above threshold.
 
 4. **Memory**: SAM ViT-H requires approximately 2.5 GB of VRAM. The pipeline will OOM on GPUs with less than 4 GB when processing multiple subjects simultaneously.
 
@@ -344,10 +344,10 @@ SAM_CHECKPOINT=models/sam_vit_h_4b8939.pth python generate_stylization_ablation.
 ## 12. Script Dependency Graph
 
 ```
-processimage.py  (standalone — core pipeline)
+process_image.py  (standalone — core pipeline)
      |
      v
-evaluate_image_blending.py  (imports nothing from processimage)
+evaluate_image_blending.py  (imports nothing from process_image)
      |
      v
 evaluate_weight_sensitivity.py  (imports from evaluate_image_blending)

@@ -372,8 +372,8 @@ d = ImageDisplayer(1, 2)
 
 if __name__ == "__main__":
     if len(sys.argv) < 4:
-        print("Usage: python processimage.py <method_name> <image_path> <output_name_without_extension> ")
-        print("Example: python processimage.py lol_sam images/input/car1.png car1_results")
+        print("Usage: python process_image.py <method_name> <image_path> <output_name_without_extension> ")
+        print("Example: python process_image.py lol_sam images/input/car1.png car1_results")
         sys.exit(1)
     
     method_name = sys.argv[1]

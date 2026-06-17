@@ -4,7 +4,7 @@ import json
 from pathlib import Path
 import numpy as np
 from PIL import Image
-from processimage import ImageProcessor, load_image
+from process_image import ImageProcessor, load_image
 
 ROOT = Path('images')
 OUT = Path('results')
@@ -60,7 +60,7 @@ def main():
             print('SAM mask failed for', img_name, e)
             full_sam = None
 
-        # Fade mask (heuristic) - use get_fade_mask from processimage
+        # Fade mask (heuristic) - use get_fade_mask from process_image
         try:
             fade_pil = p.get_fade_mask(w, h, int(0.08 * min(w, h)))
             fade_arr = np.array(fade_pil)

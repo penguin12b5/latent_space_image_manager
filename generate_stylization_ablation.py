@@ -35,7 +35,7 @@ import torchvision
 
 
 # ---------------------------------------------------------------------------
-# Core pipeline components (extracted from processimage.py to avoid its
+# Core pipeline components (extracted from process_image.py to avoid its
 # module-level model instantiation side effects)
 # ---------------------------------------------------------------------------
 

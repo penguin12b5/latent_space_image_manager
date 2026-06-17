@@ -123,7 +123,7 @@ The repository implements the complete experimental framework for object-aware i
 \toprule
 \textbf{Script} & \textbf{Purpose} \\
 \midrule
-\texttt{processimage.py} & Core reconstruction pipeline (all 4 methods) \\
+\texttt{process\_image.py} & Core reconstruction pipeline (all 4 methods) \\
 \texttt{evaluate\_image\_blending.py} & Per-image composite quality evaluation ($Q_{\text{img}}$) \\
 \texttt{eval\_metrics.py} & Aggregate metrics (FID, LPIPS) computation \\
 \texttt{compute\_iou\_direct.py} & IoU between method masks and GrabCut reference \\
@@ -135,7 +135,7 @@ The repository implements the complete experimental framework for object-aware i
 \end{table}
 
 % ============================================================================
-\section{Core Reconstruction Pipeline: \texttt{processimage.py}}
+\section{Core Reconstruction Pipeline: \texttt{process\_image.py}}
 
 \subsection{Architecture}
 
@@ -233,7 +233,7 @@ Each tile is processed independently, ensuring stable VAE encoding regardless of
 \subsection{Command-Line Interface}
 
 \begin{lstlisting}[style=bash]
-python processimage.py <method> <image_path> <output_name>
+python process_image.py <method> <image_path> <output_name>
 \end{lstlisting}
 
 Where \texttt{<method>} is one of: \texttt{dod}, \texttt{sam}, \texttt{lol\_fade}, \texttt{lol\_sam}.
@@ -305,7 +305,7 @@ For each image, the script:
 \begin{enumerate}
   \item Runs Faster R-CNN to obtain the top-confidence bounding box.
   \item Generates a \textbf{SAM mask} by running full SAM inference (ViT-H by default) with the bounding box as prompt.
-  \item Generates a \textbf{FADE mask} using the same heuristic as \texttt{processimage.py} and binarizes it at the 127 threshold.
+  \item Generates a \textbf{FADE mask} using the same heuristic as \texttt{process\_image.py} and binarizes it at the 127 threshold.
 \end{enumerate}
 
 \subsection{IoU Calculation}
@@ -474,16 +474,16 @@ Model files are tracked via Git LFS. Run \texttt{git lfs pull} after cloning.
 
 \begin{lstlisting}[style=bash]
 # DOD-FADE
-python processimage.py dod images/input/car1.png car1_dod_fade_result
+python process_image.py dod images/input/car1.png car1_dod_fade_result
 
 # DOD-SAM
-python processimage.py sam images/input/car1.png car1_dod_sam_result
+python process_image.py sam images/input/car1.png car1_dod_sam_result
 
 # LOL-FADE
-python processimage.py lol_fade images/input/car1.png car1_lol_fade_result
+python process_image.py lol_fade images/input/car1.png car1_lol_fade_result
 
 # LOL-SAM
-python processimage.py lol_sam images/input/car1.png car1_lol_sam_result
+python process_image.py lol_sam images/input/car1.png car1_lol_sam_result
 \end{lstlisting}
 
 \subsection{Run Per-Image Evaluation}
@@ -519,7 +519,7 @@ SAM_CHECKPOINT=models/sam_vit_h_4b8939.pth python generate_stylization_ablation.
 \subsection{Design Decisions}
 
 \begin{enumerate}
-  \item \textbf{Module-level model instantiation}: \texttt{processimage.py} instantiates \texttt{ImageProcessor} and \texttt{ImageDisplayer} at import time (lines 370--371). This was chosen for interactive notebook usage but causes side effects when importing the module. The ablation script (\texttt{generate\_stylization\_ablation.py}) reimplements the classes to avoid this.
+  \item \textbf{Module-level model instantiation}: \texttt{process\_image.py} instantiates \texttt{ImageProcessor} and \texttt{ImageDisplayer} at import time (lines 370--371). This was chosen for interactive notebook usage but causes side effects when importing the module. The ablation script (\texttt{generate\_stylization\_ablation.py}) reimplements the classes to avoid this.
 
   \item \textbf{Coordinate mapping via integer division}: The pixel-to-latent mapping \texttt{y1 // 8} introduces up to 7 pixels of alignment error. This is acceptable given the VAE's $8\times$ downsampling, which already blurs spatial boundaries.
 
@@ -535,7 +535,7 @@ SAM_CHECKPOINT=models/sam_vit_h_4b8939.pth python generate_stylization_ablation.
 
   \item \textbf{Fixed hyperparameters}: The fade radius (8\%), power exponent (1.5), and detection threshold (0.8) are hardcoded. The paper justifies these choices empirically but does not expose them as CLI arguments.
 
-  \item \textbf{Single-object priority in IoU}: \texttt{compute\_iou\_direct.py} uses only the highest-confidence detection for IoU computation, while \texttt{processimage.py} processes all detections above threshold.
+  \item \textbf{Single-object priority in IoU}: \texttt{compute\_iou\_direct.py} uses only the highest-confidence detection for IoU computation, while \texttt{process\_image.py} processes all detections above threshold.
 
   \item \textbf{Memory}: SAM ViT-H requires approximately 2.5\,GB of VRAM. The pipeline will OOM on GPUs with less than 4\,GB when processing multiple subjects simultaneously.
 \end{enumerate}
@@ -546,10 +546,10 @@ SAM_CHECKPOINT=models/sam_vit_h_4b8939.pth python generate_stylization_ablation.
 The following diagram shows the inter-script dependencies:
 
 \begin{verbatim}
-processimage.py  (standalone -- core pipeline)
+process_image.py  (standalone -- core pipeline)
      |
      v
-evaluate_image_blending.py  (imports nothing from processimage)
+evaluate_image_blending.py  (imports nothing from process_image)
      |
      v
 evaluate_weight_sensitivity.py  (imports from evaluate_image_blending)

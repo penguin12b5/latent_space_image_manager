@@ -8,7 +8,7 @@ methods=("dod" "sam" "lol_fade" "lol_sam")
 for image in "${images[@]}"; do
     for method in "${methods[@]}"; do
         echo "Processing: $image with $method method..."
-        python processimage.py "$method" "images/input/${image}.png" "${image}_${method}_result"
+        python process_image.py "$method" "images/input/${image}.png" "${image}_${method}_result"
         echo "Completed: $image with $method method"
         echo "---"
     done
