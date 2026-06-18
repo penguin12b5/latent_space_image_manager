@@ -11,12 +11,13 @@ from tqdm import tqdm
 import scipy.linalg
 
 # Config
-# Path to the manuscript's all_images folder (absolute workspace path)
-ROOT = Path('images')
+# Repo root is one level up from scripts/
+_REPO = Path(__file__).resolve().parent.parent
+ROOT = _REPO / 'images'
 METHOD_FOLDERS = ['dod_fade','dod_sam','lol_fade','lol_sam','dod_fade','output']
 METHODS = ['DOD-FADE','DOD-SAM','LOL-FADE','LOL-SAM','DOD-FADE-dup','OUTPUT']
 INPUT_FOLDER = ROOT / 'input'
-OUT_DIR = Path('results') #Path(__file__).resolve().parent
+OUT_DIR = _REPO / 'results'
 METRICS_OUT = OUT_DIR / 'metrics.json'
 PER_IMAGE_CSV = OUT_DIR / 'per_image_metrics.csv'
 LATEX_SNIPPET = OUT_DIR / 'quant_table.tex'

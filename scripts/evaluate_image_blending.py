@@ -1,7 +1,12 @@
 import cv2
 import numpy as np
 import os
+import sys
+from pathlib import Path
 from skimage.metrics import structural_similarity as ssim
+
+# Repo root is one level up from scripts/
+_REPO = Path(__file__).resolve().parent.parent
 
 
 def extract_mask_grabcut(image, border_ratio=0.05, iterations=5):
@@ -175,10 +180,10 @@ def evaluate_method(original, result, mask):
 if __name__ == "__main__":
 
     method_paths = [
-        ("Method 1", "images_eval/dod_fade"),
-        ("Method 2", "images_eval/dod_sam"),
-        ("Method 3", "images_eval/lol_fade"),
-        ("Method 4", "images_eval/lol_sam"),
+        ("Method 1", str(_REPO / "images_eval" / "dod_fade")),
+        ("Method 2", str(_REPO / "images_eval" / "dod_sam")),
+        ("Method 3", str(_REPO / "images_eval" / "lol_fade")),
+        ("Method 4", str(_REPO / "images_eval" / "lol_sam")),
     ]
 
     images = ["car1.png", "car2.png", "car3.png", 
@@ -188,15 +193,14 @@ if __name__ == "__main__":
               ]
 
     for image_name in images:
-        original_path = os.path.join("images_eval", "input", image_name)
+        original_path = str(_REPO / "images_eval" / "input" / image_name)
         original = cv2.imread(original_path)
         if original is None:
             raise FileNotFoundError(f"Original image not found: {original_path}")
 
         mask = extract_mask_grabcut(original)
         # ensure masks output folder exists and save mask
-        out_mask_dir = os.path.join(os.path.dirname(__file__), 'results', 'masks')
-        out_mask_dir = os.path.normpath(out_mask_dir)
+        out_mask_dir = str(_REPO / 'results' / 'masks')
         os.makedirs(out_mask_dir, exist_ok=True)
         mask_path = os.path.join(out_mask_dir, image_name)
         # save binary mask as 8-bit PNG (0/255)

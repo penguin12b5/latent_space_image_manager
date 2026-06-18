@@ -8,8 +8,10 @@ import torch
 from torchvision import transforms
 import torchvision
 
-ROOT = Path('images')
-OUT = Path('results')
+# Repo root is one level up from scripts/
+_REPO = Path(__file__).resolve().parent.parent
+ROOT = _REPO / 'images'
+OUT = _REPO / 'results'
 METRICS = OUT / 'metrics.json'
 
 def binarize_mask(arr):

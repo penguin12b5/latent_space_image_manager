@@ -1,4 +1,6 @@
 import os
+import sys
+from pathlib import Path
 import numpy as np
 import torch
 import torchvision
@@ -10,14 +12,22 @@ from diffusers import AutoencoderKL
 from torchvision.transforms.functional import to_pil_image
 from segment_anything import sam_model_registry, SamPredictor
 
+# Repo root is one level up from scripts/
+_REPO = Path(__file__).resolve().parent.parent
+
 class ImageProcessor:
     def __init__(self, detection_threshold=0.8):
-        self.device = "cuda" if torch.cuda.is_available() else "cpu"
+        if torch.cuda.is_available():
+            self.device = "cuda"
+        elif torch.backends.mps.is_available():
+            self.device = "mps"
+        else:
+            self.device = "cpu"
         self.detection_threshold = detection_threshold
         
         #load models
         self.detection_model = torchvision.models.detection.fasterrcnn_resnet50_fpn(pretrained=True).to(self.device).eval()
-        self.vae = AutoencoderKL.from_pretrained("./models").to(self.device).eval()
+        self.vae = AutoencoderKL.from_pretrained(str(_REPO / "models")).to(self.device).eval()
         
     def find_subjects(self, image, max_width=1000, max_height=1000):
         image_tensor = transforms.ToTensor()(image).to(self.device)
@@ -159,7 +169,12 @@ def get_fade_mask_latent(width, height, fade_px, device="cpu"):
 
 def get_sam_mask(image, box, sam_checkpoint, sam_model_type="vit_h", device=None):
     if device is None:
-        device = "cuda" if torch.cuda.is_available() else "cpu"
+        if torch.cuda.is_available():
+            device = "cuda"
+        elif torch.backends.mps.is_available():
+            device = "mps"
+        else:
+            device = "cpu"
 
     # Auto-detect model type from checkpoint filename if not explicitly provided
     if sam_model_type == "vit_h" and sam_checkpoint and "vit_b" in sam_checkpoint:
@@ -182,9 +197,9 @@ def get_sam_mask(image, box, sam_checkpoint, sam_model_type="vit_h", device=None
     return mask_cropped
 
 def save_image(image, output_name):
-    output_dir = "images/output"
+    output_dir = str(_REPO / "images" / "output")
     os.makedirs(output_dir, exist_ok=True)
-    image.save(f"{output_dir}/{output_name}.png")
+    image.save(os.path.join(output_dir, f"{output_name}.png"))
 
 def process_image_dod(image_processor, image_displayer, image_path, output_name, scale=0.25):
     #take image and find its subjects
@@ -364,8 +379,8 @@ import sys
 
 # Set SAM checkpoint environment variable
 if 'SAM_CHECKPOINT' not in os.environ:
-    #os.environ['SAM_CHECKPOINT'] = 'models/sam_vit_b_01ec64.pth'
-    os.environ['SAM_CHECKPOINT'] = 'models/sam_vit_h_4b8939.pth'
+    #os.environ['SAM_CHECKPOINT'] = str(_REPO / 'models' / 'sam_vit_b_01ec64.pth')
+    os.environ['SAM_CHECKPOINT'] = str(_REPO / 'models' / 'sam_vit_h_4b8939.pth')
 
 p = ImageProcessor()
 d = ImageDisplayer(1, 2)

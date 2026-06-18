@@ -21,9 +21,14 @@ import numpy as np
 import cv2
 import torch
 import torch.nn.functional as F
+from pathlib import Path
 from PIL import Image
 
-sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+# Repo root is one level up from scripts/
+_REPO = Path(__file__).resolve().parent.parent
+
+# Keep scripts/ on sys.path for any sibling imports
+sys.path.insert(0, str(Path(__file__).resolve().parent))
 
 from torchvision import transforms
 from torchvision.transforms.functional import to_pil_image
@@ -41,12 +46,17 @@ import torchvision
 
 class ImageProcessor:
     def __init__(self, detection_threshold=0.8):
-        self.device = "cuda" if torch.cuda.is_available() else "cpu"
+        if torch.cuda.is_available():
+            self.device = "cuda"
+        elif torch.backends.mps.is_available():
+            self.device = "mps"
+        else:
+            self.device = "cpu"
         self.detection_threshold = detection_threshold
         self.detection_model = torchvision.models.detection.fasterrcnn_resnet50_fpn(
             pretrained=True
         ).to(self.device).eval()
-        self.vae = AutoencoderKL.from_pretrained("./models").to(self.device).eval()
+        self.vae = AutoencoderKL.from_pretrained(str(_REPO / "models")).to(self.device).eval()
 
     def find_subjects(self, image, max_width=1000, max_height=1000):
         image_tensor = transforms.ToTensor()(image).to(self.device)
@@ -102,7 +112,12 @@ def load_image(file_path):
 
 def get_sam_mask(image, box, sam_checkpoint, sam_model_type="vit_h", device=None):
     if device is None:
-        device = "cuda" if torch.cuda.is_available() else "cpu"
+        if torch.cuda.is_available():
+            device = "cuda"
+        elif torch.backends.mps.is_available():
+            device = "mps"
+        else:
+            device = "cpu"
     if sam_model_type == "vit_h" and sam_checkpoint and "vit_b" in sam_checkpoint:
         sam_model_type = "vit_b"
     x1, y1, x2, y2 = map(int, box)
@@ -176,8 +191,8 @@ IMAGES = [
     "horse1.png", "horse2.png", "horse3.png",
 ]
 
-OUTPUT_DIR = os.path.join("images", "output", "ablation")
-RESULTS_DIR = "results"
+OUTPUT_DIR = str(_REPO / "images" / "output" / "ablation")
+RESULTS_DIR = str(_REPO / "results")
 
 
 def latent_stats(z):
@@ -342,7 +357,7 @@ def main():
     os.makedirs(RESULTS_DIR, exist_ok=True)
 
     if "SAM_CHECKPOINT" not in os.environ:
-        os.environ["SAM_CHECKPOINT"] = "models/sam_vit_h_4b8939.pth"
+        os.environ["SAM_CHECKPOINT"] = str(_REPO / "models" / "sam_vit_h_4b8939.pth")
 
     print("Loading models...")
     processor = ImageProcessor()
@@ -351,10 +366,10 @@ def main():
 
     for img_name in IMAGES:
         stem = os.path.splitext(img_name)[0]
-        image_path = os.path.join("images", "input", img_name)
+        image_path = str(_REPO / "images" / "input" / img_name)
 
         if not os.path.exists(image_path):
-            image_path = os.path.join("images_eval", "input", img_name)
+            image_path = str(_REPO / "images_eval" / "input" / img_name)
         if not os.path.exists(image_path):
             print(f"Skipping {img_name}: not found")
             continue

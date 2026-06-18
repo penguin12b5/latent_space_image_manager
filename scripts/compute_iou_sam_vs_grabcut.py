@@ -1,13 +1,19 @@
 #!/usr/bin/env python3
 import os
+import sys
 import json
 from pathlib import Path
 import numpy as np
 from PIL import Image
-from process_image import ImageProcessor, load_image
 
-ROOT = Path('images')
-OUT = Path('results')
+# Ensure the scripts/ directory is on the path so sibling modules are importable
+sys.path.insert(0, str(Path(__file__).resolve().parent))
+from process_image import ImageProcessor, load_image, get_sam_mask, get_fade_mask
+
+# Paths are relative to the repo root (one level up from scripts/)
+_REPO = Path(__file__).resolve().parent.parent
+ROOT = _REPO / 'images'
+OUT = _REPO / 'results'
 METRICS = OUT / 'metrics.json'
 
 def binarize_mask(arr):
@@ -52,7 +58,7 @@ def main():
         # SAM mask (roi crop)
         try:
             sam_checkpoint = os.environ.get('SAM_CHECKPOINT', None)
-            mask_roi = p.get_sam_mask(img, (x1, y1, x1 + w, y1 + h), sam_checkpoint)
+            mask_roi = get_sam_mask(img, (x1, y1, x1 + w, y1 + h), sam_checkpoint)
             mask_arr = np.array(mask_roi)
             mask_bin = binarize_mask(mask_arr)
             full_sam = paste_roi_mask((H, W), mask_bin, x1, y1)
@@ -62,7 +68,7 @@ def main():
 
         # Fade mask (heuristic) - use get_fade_mask from process_image
         try:
-            fade_pil = p.get_fade_mask(w, h, int(0.08 * min(w, h)))
+            fade_pil = get_fade_mask(w, h, int(0.08 * min(w, h)))
             fade_arr = np.array(fade_pil)
             fade_bin = binarize_mask(fade_arr)
             full_fade = paste_roi_mask((H, W), fade_bin, x1, y1)

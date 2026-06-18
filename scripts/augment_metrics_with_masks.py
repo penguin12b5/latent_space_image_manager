@@ -5,11 +5,11 @@ import cv2
 import numpy as np
 import sys
 
-# workspace paths
-WS = Path(__file__).resolve().parent
-ROOT = Path('images')
-METRICS = WS / 'metrics.json'
-OUT_TEX = WS / 'quant_table.tex'
+# workspace paths (scripts/ lives one level below the repo root)
+WS = Path(__file__).resolve().parent.parent
+ROOT = WS / 'images'
+METRICS = WS / 'results' / 'metrics.json'
+OUT_TEX = WS / 'results' / 'quant_table.tex'
 
 # helper: boundary band
 def boundary_band(mask, width=4):
@@ -78,7 +78,10 @@ for img in images:
     mask = (mask>127).astype(np.uint8)
     orig = cv2.imread(str(ROOT/'input'/img))
     for m in methods:
-        res_path = ROOT/m/img
+        if m == 'output':
+            res_path = WS / 'images' / 'output' / img
+        else:
+            res_path = WS / 'images_eval' / m / img
         if not res_path.exists():
             continue
         res = cv2.imread(str(res_path))
@@ -128,10 +131,12 @@ name_map = {'dod_fade':'DOD-FADE','dod_sam':'DOD-SAM','lol_fade':'LOL-FADE','lol
 for m in methods:
     fid_str = f"{fid.get(m):.2f}" if fid.get(m) is not None else '--'
     lp_str = f"{lpips.get(m):.4f}" if lpips.get(m) is not None else '--'
-    iou_str = '--'
+    iou_val = metrics.get('iou', {}).get(m)
+    iou_str = f"{iou_val:.4f}" if iou_val is not None else '--'
     be = metrics.get('boundary_energy',{}).get(m)
     be_str = f"{be:.2f}" if be is not None else '--'
-    comp_str = '--'
+    comp_val = metrics.get('composite', {}).get(m)
+    comp_str = f"{comp_val:.4f}" if comp_val is not None else '--'
     lines.append(f"{name_map.get(m,m)} & {fid_str} & {lp_str} & {iou_str} & {be_str} & {comp_str} \\\\")
 lines.append('\\hline')
 lines.append('\\end{tabularx}')

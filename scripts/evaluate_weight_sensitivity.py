@@ -13,6 +13,11 @@ Schemes:
 import csv
 import json
 import os
+import sys
+from pathlib import Path
+
+# Ensure scripts/ directory is on path for sibling imports
+sys.path.insert(0, str(Path(__file__).resolve().parent))
 
 import cv2
 import numpy as np
@@ -25,6 +30,9 @@ from evaluate_image_blending import (
     resize_to_match,
 )
 
+# Repo root is one level up from scripts/
+_REPO = Path(__file__).resolve().parent.parent
+
 WEIGHTING_SCHEMES = {
     "original": {"edge": 0.45, "smooth": 0.35, "object": 0.20},
     "equal": {"edge": 1/3, "smooth": 1/3, "object": 1/3},
@@ -32,10 +40,10 @@ WEIGHTING_SCHEMES = {
 }
 
 METHOD_PATHS = [
-    ("DOD-FADE", "images_eval/dod_fade"),
-    ("DOD-SAM", "images_eval/dod_sam"),
-    ("LOL-FADE", "images_eval/lol_fade"),
-    ("LOL-SAM", "images_eval/lol_sam"),
+    ("DOD-FADE", str(_REPO / "images_eval" / "dod_fade")),
+    ("DOD-SAM",  str(_REPO / "images_eval" / "dod_sam")),
+    ("LOL-FADE", str(_REPO / "images_eval" / "lol_fade")),
+    ("LOL-SAM",  str(_REPO / "images_eval" / "lol_sam")),
 ]
 
 IMAGES = [
@@ -61,7 +69,7 @@ def run_evaluation(scheme_name, weights, output_dir):
     method_averages = {name: [] for name, _ in METHOD_PATHS}
 
     for image_name in IMAGES:
-        original_path = os.path.join("images_eval", "input", image_name)
+        original_path = str(_REPO / "images_eval" / "input" / image_name)
         original = cv2.imread(original_path)
         if original is None:
             print(f"  WARNING: skipping {image_name} (not found)")
@@ -172,7 +180,7 @@ def print_summary(summary):
 
 
 if __name__ == "__main__":
-    output_base = "results/weight_sensitivity"
+    output_base = str(_REPO / "results" / "weight_sensitivity")
     os.makedirs(output_base, exist_ok=True)
 
     summaries = {}
