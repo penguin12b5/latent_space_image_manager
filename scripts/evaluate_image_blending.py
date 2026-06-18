@@ -1,7 +1,8 @@
 import cv2
 import numpy as np
 import os
-import sys
+import json
+import argparse
 from pathlib import Path
 from skimage.metrics import structural_similarity as ssim
 
@@ -179,6 +180,22 @@ def evaluate_method(original, result, mask):
 
 if __name__ == "__main__":
 
+    parser = argparse.ArgumentParser()
+    parser.add_argument(
+        "--output-mask",
+        action="store_true",
+        help="Save GrabCut masks to results/masks (default: disabled)",
+    )
+    parser.add_argument(
+        "--result-file",
+        default=str(
+            _REPO / "results" / "evaluate_image_blending_result.json"
+        ),
+        help="Output JSON file for evaluation results",
+    )
+
+    args = parser.parse_args()
+
     method_paths = [
         ("Method 1", str(_REPO / "images_eval" / "dod_fade")),
         ("Method 2", str(_REPO / "images_eval" / "dod_sam")),
@@ -186,46 +203,110 @@ if __name__ == "__main__":
         ("Method 4", str(_REPO / "images_eval" / "lol_sam")),
     ]
 
-    images = ["car1.png", "car2.png", "car3.png", 
-              "cat1.png", "cat2.png", "cat3.png", 
-              "dog1.png", "dog2.png", 
-              "horse1.png", "horse2.png", "horse3.png"
-              ]
+    images = [
+        "car1.png", "car2.png", "car3.png",
+        "cat1.png", "cat2.png", "cat3.png",
+        "dog1.png", "dog2.png",
+        "horse1.png", "horse2.png", "horse3.png",
+    ]
+
+    all_results = {}
 
     for image_name in images:
-        original_path = str(_REPO / "images_eval" / "input" / image_name)
+
+        original_path = str(
+            _REPO / "images_eval" / "input" / image_name
+        )
+
         original = cv2.imread(original_path)
+
         if original is None:
-            raise FileNotFoundError(f"Original image not found: {original_path}")
+            raise FileNotFoundError(
+                f"Original image not found: {original_path}"
+            )
 
         mask = extract_mask_grabcut(original)
-        # ensure masks output folder exists and save mask
-        out_mask_dir = str(_REPO / 'results' / 'masks')
-        os.makedirs(out_mask_dir, exist_ok=True)
-        mask_path = os.path.join(out_mask_dir, image_name)
-        # save binary mask as 8-bit PNG (0/255)
-        cv2.imwrite(mask_path, (mask * 255).astype(np.uint8))
-        print(f"Saved GrabCut mask: {mask_path}")
+
+        # Optional mask output
+        if args.output_mask:
+            out_mask_dir = _REPO / "results" / "masks"
+            out_mask_dir.mkdir(parents=True, exist_ok=True)
+
+            mask_path = out_mask_dir / image_name
+
+            cv2.imwrite(
+                str(mask_path),
+                (mask * 255).astype(np.uint8),
+            )
+
+            print(f"Saved GrabCut mask: {mask_path}")
 
         print(f"\nEvaluating image: {image_name}")
-        scores = {}
-        for name, method_dir in method_paths:
-            method_path = os.path.join(method_dir, image_name)
-            result = cv2.imread(method_path)
-            if result is None:
-                raise FileNotFoundError(f"Method image not found: {method_path}")
 
-            scores[name] = evaluate_method(original, result, mask)
+        scores = {}
+
+        for name, method_dir in method_paths:
+
+            method_path = os.path.join(
+                method_dir,
+                image_name,
+            )
+            print(f"Loading method result: {method_path}")
+
+            result = cv2.imread(method_path)
+
+            if result is None:
+                raise FileNotFoundError(
+                    f"Method image not found: {method_path}"
+                )
+
+            scores[name] = evaluate_method(
+                original,
+                result,
+                mask,
+            )
 
         for name, result in scores.items():
             print(f"\n{name}")
+
             for k, v in result.items():
                 print(f"{k:25s}: {v:.4f}")
 
-        best_score = max(result["overall"] for result in scores.values())
-        winners = [name for name, result in scores.items() if result["overall"] == best_score]
+        best_score = max(
+            result["overall"]
+            for result in scores.values()
+        )
+
+        winners = [
+            name
+            for name, result in scores.items()
+            if result["overall"] == best_score
+        ]
 
         if len(winners) == 1:
             print(f"\nWinner: {winners[0]}")
         else:
             print(f"\nTie: {', '.join(winners)}")
+
+        all_results[image_name] = {
+            "scores": scores,
+            "winners": winners,
+            "best_score": float(best_score),
+        }
+
+    # Save JSON results
+    result_path = Path(args.result_file)
+    result_path.parent.mkdir(
+        parents=True,
+        exist_ok=True,
+    )
+
+    with open(result_path, "w") as f:
+        json.dump(
+            all_results,
+            f,
+            indent=2,
+        )
+
+    print(f"\nSaved results to: {result_path}")
+    
