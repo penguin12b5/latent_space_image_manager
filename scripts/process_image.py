@@ -198,10 +198,18 @@ def get_sam_mask(image, box, sam_checkpoint, sam_model_type="vit_h", device=None
 
 def save_image(image, output_name):
     output_dir = str(_REPO / "images" / "output")
+
+    # check if output_name has subdirectories and create them if necessary
+    subdir = os.path.dirname(output_name)
+    if subdir:
+        # update output_dir to include subdirectories
+        output_dir = os.path.join(output_dir, subdir)
+        output_name = os.path.basename(output_name)
+        
     os.makedirs(output_dir, exist_ok=True)
     image.save(os.path.join(output_dir, f"{output_name}.png"))
 
-def process_image_dod(image_processor, image_displayer, image_path, output_name, scale=0.25):
+def process_image_dod_fade(image_processor, image_displayer, image_path, output_name, scale=0.25):
     #take image and find its subjects
     image = load_image(image_path)
     image_displayer.add_to_plot(np.array(image), 0, 0, title="Original")
@@ -233,7 +241,7 @@ def process_image_dod(image_processor, image_displayer, image_path, output_name,
     #save image
     save_image(decoded_image, output_name)
 
-def process_image_sam(image_processor, image_displayer, image_path, output_name, scale=0.25):
+def process_image_dod_sam(image_processor, image_displayer, image_path, output_name, scale=0.25):
     #take image and find its subjects
     image = load_image(image_path)
     image_displayer.add_to_plot(np.array(image), 0, 0, title="Original")
@@ -395,11 +403,11 @@ if __name__ == "__main__":
     image_path = sys.argv[2]
     output_name = sys.argv[3]
 
-    if method_name == "sam":
-        process_image_sam(p, d, image_path, output_name)
+    if method_name == "dod_sam":
+        process_image_dod_sam(p, d, image_path, output_name)
     elif method_name == "lol_fade":
         process_image_lol(p, d, image_path, output_name, mask_type="fade")
     elif method_name == "lol_sam":
         process_image_lol(p, d, image_path, output_name, mask_type="sam")
-    elif method_name == "dod":
-        process_image_dod(p, d, image_path, output_name)
+    elif method_name == "dod_fade":
+        process_image_dod_fade(p, d, image_path, output_name)
