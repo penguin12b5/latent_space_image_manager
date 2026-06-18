@@ -27,7 +27,7 @@ class ImageProcessor:
         
         #load models
         self.detection_model = torchvision.models.detection.fasterrcnn_resnet50_fpn(pretrained=True).to(self.device).eval()
-        self.vae = AutoencoderKL.from_pretrained(str(_REPO / "models")).to(self.device).eval()
+        self.vae = AutoencoderKL.from_pretrained(str(_REPO / "models"), use_safetensors=False).to(self.device).eval()
         
     def find_subjects(self, image, max_width=1000, max_height=1000):
         image_tensor = transforms.ToTensor()(image).to(self.device)
