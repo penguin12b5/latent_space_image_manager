@@ -14,9 +14,28 @@
     after activate the virtual environment
     `python -m pip install -r requirements.txt`
 
+## Download SAM ViT-H model
+The SAM ViT-H checkpoint (~2.4 GB) is required by `process_image.py` but is not stored in git.
+Download it manually:
+```bash
+wget https://huggingface.co/HCMUE-Research/SAM-vit-h/resolve/main/sam_vit_h_4b8939.pth \
+  -O models/sam_vit_h_4b8939.pth
+```
+
+Alternatively, use the smaller SAM ViT-B model already included (`models/sam_vit_b_01ec64.pth`) by setting:
+```bash
+export SAM_CHECKPOINT=models/sam_vit_b_01ec64.pth
+```
+
 ## Download model files from git
-* install git-lfs:
+* install git-lfs (macOS):
     `brew install git-lfs`
+    `git lfs install`
+* install git-lfs (Linux RHEL/CentOS 8+):
+    `yum install -y git-lfs`
+    `git lfs install`
+* install git-lfs (Linux Debian/Ubuntu):
+    `apt-get install -y git-lfs`
     `git lfs install`
 * pull the lfs files
     `git lfs pull`
