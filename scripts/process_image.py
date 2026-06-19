@@ -27,9 +27,11 @@ class ImageProcessor:
         
         #load models
         self.detection_model = torchvision.models.detection.fasterrcnn_resnet50_fpn(pretrained=True).to(self.device).eval()
-        self.vae = AutoencoderKL.from_pretrained(str(_REPO / "models"), use_safetensors=False).to(self.device).eval()
+        # use safetensors if in windows
+        use_safetensors = os.name == "nt"
+        self.vae = AutoencoderKL.from_pretrained(str(_REPO / "models"), use_safetensors=use_safetensors).to(self.device).eval()
         
-    def find_subjects(self, image, max_width=1000, max_height=1000):
+    def find_subjects(self, image, max_width=1000, max_height=1000, max_subjects=None):
         image_tensor = transforms.ToTensor()(image).to(self.device)
 
         with torch.no_grad():
@@ -37,6 +39,10 @@ class ImageProcessor:
 
         boxes, scores = outputs["boxes"], outputs["scores"]
         keep_indices = [i for i, s in enumerate(scores) if s > self.detection_threshold]
+
+        # cap to top-N detections (already sorted by confidence descending)
+        if max_subjects is not None:
+            keep_indices = keep_indices[:max_subjects]
 
         #search for subjects
         subjects = []
@@ -205,32 +211,28 @@ def save_image(image, output_name):
         # update output_dir to include subdirectories
         output_dir = os.path.join(output_dir, subdir)
         output_name = os.path.basename(output_name)
-        
+
     os.makedirs(output_dir, exist_ok=True)
     image.save(os.path.join(output_dir, f"{output_name}.png"))
 
-def process_image_dod_fade(image_processor, image_displayer, image_path, output_name, scale=0.25):
+def process_image_dod_fade(image_processor, image_displayer, image_path, output_name, scale=0.25, max_subjects=None):
     #take image and find its subjects
     image = load_image(image_path)
     image_displayer.add_to_plot(np.array(image), 0, 0, title="Original")
-    subjects = image_processor.find_subjects(image)
+    subjects = image_processor.find_subjects(image, max_subjects=max_subjects)
 
     #resize image by scale, then encode + decode
     decoded_image = image_processor.decode(image_processor.encode(image_processor.resize_image(image, scale)))
     #then resize image back to the original size
     decoded_image = image_processor.resize_image(tensor_to_pil(decoded_image), 1 / scale)
 
-    #for each subject, encode + decode, 
-    #then attach to the original image with blend
+    #for each subject, blend with the original image using fade mask
     for i, (subject_image, (x1, y1)) in enumerate(subjects):
-        decoded_subject = image_processor.decode(image_processor.encode(subject_image))
-        decoded_subject = tensor_to_pil(decoded_subject)
-
-        w, h = decoded_subject.size
+        w, h = subject_image.size
         fade_px = int(0.08 * min(w, h)) 
         mask = get_fade_mask(w, h, fade_px)
 
-        decoded_image.paste(decoded_subject, (int(x1), int(y1)), mask)
+        decoded_image.paste(subject_image, (int(x1), int(y1)), mask)
         print(f"Subject {i + 1} placed at ({x1},{y1})")
 
     #display
@@ -241,11 +243,11 @@ def process_image_dod_fade(image_processor, image_displayer, image_path, output_
     #save image
     save_image(decoded_image, output_name)
 
-def process_image_dod_sam(image_processor, image_displayer, image_path, output_name, scale=0.25):
+def process_image_dod_sam(image_processor, image_displayer, image_path, output_name, scale=0.25, max_subjects=None):
     #take image and find its subjects
     image = load_image(image_path)
     image_displayer.add_to_plot(np.array(image), 0, 0, title="Original")
-    subjects = image_processor.find_subjects(image)
+    subjects = image_processor.find_subjects(image, max_subjects=max_subjects)
 
     #resize image by scale, then encode + decode
     decoded_image = image_processor.decode(image_processor.encode(image_processor.resize_image(image, scale)))
@@ -255,8 +257,8 @@ def process_image_dod_sam(image_processor, image_displayer, image_path, output_n
     #for each subject, encode + decode, then attach to the original image with blend
     print("number of subjects found:", len(subjects))
     for i, (subject_image, (x1, y1)) in enumerate(subjects):
-        decoded_subject = image_processor.decode(image_processor.encode(subject_image))
-        decoded_subject = tensor_to_pil(decoded_subject)
+        # use original subject image for foreground details, since SAM will help us blend it in cleanly
+        decoded_subject = subject_image
 
         # try to use SAM mask if available via environment variable SAM_CHECKPOINT
         sam_checkpoint = os.environ.get('SAM_CHECKPOINT', None)
@@ -287,7 +289,7 @@ def process_image_dod_sam(image_processor, image_displayer, image_path, output_n
     #save image
     save_image(decoded_image, output_name)
 
-def process_image_lol(image_processor, image_displayer, image_path, output_name, scale=0.25, mask_type="fade"):
+def process_image_lol(image_processor, image_displayer, image_path, output_name, scale=0.25, mask_type="fade", max_subjects=None, saturate_factor=1.0):
 
     def paste_latend_with_fade(base_latent, subject_latent, top, left, fade_ratio=0.08):
         _, _, h, w = subject_latent.shape
@@ -303,7 +305,7 @@ def process_image_lol(image_processor, image_displayer, image_path, output_name,
 
         return base_latent
 
-    def paste_latend_with_sam(base_latent, subject_latent, top, left, mask_sam, mode="bilinear"):
+    def paste_latend_with_sam(base_latent, subject_latent, top, left, mask_sam, mode="bilinear", saturate_factor=1.0):
         _, _, h, w = subject_latent.shape
 
         # downsample SAM mask to latent size
@@ -317,7 +319,9 @@ def process_image_lol(image_processor, image_displayer, image_path, output_name,
         )
 
         print("before normalization mask min/max:", mask.min().item(), mask.max().item())
-        mask = mask / 255.0
+        # To experiement with stylized effect, we can change the 255.0 factor here
+        # e.g. 255.0 * 2
+        mask = mask / 255.0 * saturate_factor
         print("after normalization mask min/max:", mask.min().item(), mask.max().item())
 
         # blend
@@ -330,7 +334,7 @@ def process_image_lol(image_processor, image_displayer, image_path, output_name,
     #take image and find its subjects
     image = load_image(image_path)
     image_displayer.add_to_plot(np.array(image), 0, 0, title="Original")
-    subjects = image_processor.find_subjects(image)
+    subjects = image_processor.find_subjects(image, max_subjects=max_subjects)
 
     encoded_image = image_processor.encode(image_processor.resize_image(image, scale))
 
@@ -359,7 +363,7 @@ def process_image_lol(image_processor, image_displayer, image_path, output_name,
                 print("Using SAM for mask generation")
                 try:
                     mask_pil = get_sam_mask(image, (x1, y1, x1 + decoded_subject.width, y1 + decoded_subject.height), sam_checkpoint)
-                    merged_latent = paste_latend_with_sam(merged_latent, encoded_subject, top, left, mask_pil)
+                    merged_latent = paste_latend_with_sam(merged_latent, encoded_subject, top, left, mask_pil, saturate_factor=saturate_factor)
                     print(f"Subject latent {i + 1} placed at ({top}, {left}) using SAM mask")
                 except Exception:
                     import traceback
@@ -382,8 +386,103 @@ def process_image_lol(image_processor, image_displayer, image_path, output_name,
     #save_image
     save_image(decoded_merged, output_name)
 
+def process_image_lol_sam_foreground(image_processor, image_displayer, image_path, output_name, scale=0.25, max_subjects=None, saturate_factor=1.0):
+    '''
+    The difference between this and process_image_lol with mask_type="sam" is that this version 
+    keeps the background latent blurry and only pastes the crisp subject latent onto it using the SAM mask, 
+    whereas the other version blends the decoded blurry background with the decoded sharp subject using the 
+    SAM mask as an alpha. This version should result in a sharper subject against a blurrier background, while 
+    the other version may have a more blended look.
+    '''
+
+    def paste_subject_on_blurry_background(background_latent, subject_latent, top, left, mask_sam, saturate_factor=1.0):
+        _, _, h, w = subject_latent.shape
+
+        # Downsample SAM mask to match the subject's latent patch size
+        alpha = torch.from_numpy(np.array(mask_sam))[None, None, ...]
+        alpha = alpha.to(device=background_latent.device, dtype=background_latent.dtype)
+        mask = F.interpolate(
+            alpha,
+            size=(h, w),
+            mode="bicubic",  # Bicubic keeps the masking edges sharper
+            align_corners=False
+        )
+        mask = mask / 255.0 * saturate_factor
+        
+        # Make the mask crisp (binary) so there is no semi-transparent blur bleeding into the object edge
+        mask = torch.where(mask > 0.5, torch.ones_like(mask), torch.zeros_like(mask))
+
+        # Extract the local background patch where the subject belongs
+        bg_patch = background_latent[:, :, top:top+h, left:left+w]
+        
+        # Blend: Keep background where mask is 0, place crisp subject where mask is 1
+        blended_patch = bg_patch * (1 - mask) + subject_latent * mask
+        background_latent[:, :, top:top+h, left:left+w] = blended_patch
+
+        return background_latent
+
+    # 1. Load original image
+    image = load_image(image_path)
+    image_displayer.add_to_plot(np.array(image), 0, 0, title="Original")
+    subjects = image_processor.find_subjects(image, max_subjects=max_subjects)
+
+    # 2. Create the CRISP foreground layer (No downscaling)
+    sharp_image_latent = image_processor.encode(image)
+
+    # 3. Create the BLURRY background layer (Intentionally downscale and upscale)
+    encoded_lowres = image_processor.encode(image_processor.resize_image(image, scale))
+    blurry_background_latent = F.interpolate(
+        encoded_lowres,
+        scale_factor=1/scale,
+        mode="bilinear", # Bilinear works great here because we WANT it to look blurry
+        align_corners=False
+    )
+
+    # We will paste our sharp subjects onto our blurry background canvas
+    merged_latent = blurry_background_latent.clone()
+
+    for i, (subject_image, (x1, y1)) in enumerate(subjects):
+        # Slice the exact coordinates of the subject out of our SHARP full-res latent layer
+        top = y1 // 8
+        left = x1 // 8
+        
+        # Get the dimensions of this specific subject's latent area
+        encoded_subject_temp = p.encode(subject_image)
+        _, _, h, w = encoded_subject_temp.shape
+        
+        # Extract the completely unaltered, sharp subject data from the original latent
+        sharp_subject_latent = sharp_image_latent[:, :, top:top+h, left:left+w]
+        
+        decoded_subject = tensor_to_pil(p.decode(sharp_subject_latent))
+        sam_checkpoint = os.environ.get('SAM_CHECKPOINT', None)
+        
+        print("Using SAM to isolate the sharp foreground object")
+        try:
+            # Generate the mask based on the subject's boundaries
+            mask_pil = get_sam_mask(image, (x1, y1, x1 + decoded_subject.width, y1 + decoded_subject.height), sam_checkpoint)
+            
+            # Paste the crisp subject onto the blurry background
+            merged_latent = paste_subject_on_blurry_background(
+                merged_latent, sharp_subject_latent, top, left, mask_pil, saturate_factor=saturate_factor
+            )
+            print(f"Sharp subject {i + 1} isolated perfectly against blurry background.")
+        except Exception:
+            import traceback
+            traceback.print_exc()
+            raise RuntimeError("SAM mask generation failed")
+
+    # 4. Decode the merged result (Sharp object + Blurry background)
+    decoded_merged = tensor_to_pil(p.decode(merged_latent))
+    
+    # Display and save
+    image_displayer.add_to_plot(decoded_merged, 0, 1, title="Crisp Subject + Blur BG")
+    image_displayer.make_tight_layout()
+    image_displayer.display_plot()
+    save_image(decoded_merged, output_name)
+
 
 import sys
+import argparse
 
 # Set SAM checkpoint environment variable
 if 'SAM_CHECKPOINT' not in os.environ:
@@ -394,20 +493,29 @@ p = ImageProcessor()
 d = ImageDisplayer(1, 2)
 
 if __name__ == "__main__":
-    if len(sys.argv) < 4:
-        print("Usage: python process_image.py <method_name> <image_path> <output_name_without_extension> ")
-        print("Example: python process_image.py lol_sam images/input/car1.png car1_results")
-        sys.exit(1)
-    
-    method_name = sys.argv[1]
-    image_path = sys.argv[2]
-    output_name = sys.argv[3]
+    parser = argparse.ArgumentParser(description="Process an image with a specified method.")
+    parser.add_argument("--method", required=True, help="Method name: dod_fade, dod_sam, lol_fade, lol_sam")
+    parser.add_argument("--input_img_path", required=True, help="Path to the input image")
+    parser.add_argument("--output_img_path", required=True, help="Output name/path (without extension)")
+    parser.add_argument("--scale", type=float, default=0.25, help="Scale factor for downsampling (default: 0.25)")
+    parser.add_argument("--max_subjects", type=int, default=1, help="Max number of subjects to detect (default: 1)")
+    parser.add_argument("--saturate_factor", type=float, default=1.0, help="SAM mask saturation multiplier (default: 1.0, >1 strengthens blending)")
+    args = parser.parse_args()
+
+    method_name = args.method
+    image_path = args.input_img_path
+    output_name = args.output_img_path
+    scale = args.scale
+    max_subjects = args.max_subjects
+    saturate_factor = args.saturate_factor
 
     if method_name == "dod_sam":
-        process_image_dod_sam(p, d, image_path, output_name)
+        process_image_dod_sam(p, d, image_path, output_name, scale=scale, max_subjects=max_subjects)
     elif method_name == "lol_fade":
-        process_image_lol(p, d, image_path, output_name, mask_type="fade")
+        process_image_lol(p, d, image_path, output_name, scale=scale, mask_type="fade", max_subjects=max_subjects, saturate_factor=saturate_factor)
     elif method_name == "lol_sam":
-        process_image_lol(p, d, image_path, output_name, mask_type="sam")
+        process_image_lol(p, d, image_path, output_name, scale=scale, mask_type="sam", max_subjects=max_subjects, saturate_factor=saturate_factor)
     elif method_name == "dod_fade":
-        process_image_dod_fade(p, d, image_path, output_name)
+        process_image_dod_fade(p, d, image_path, output_name, scale=scale, max_subjects=max_subjects)
+    elif method_name == "lol_sam_foreground":
+        process_image_lol_sam_foreground(p, d, image_path, output_name, scale=scale, max_subjects=max_subjects, saturate_factor=saturate_factor)
