@@ -196,11 +196,13 @@ if __name__ == "__main__":
 
     args = parser.parse_args()
 
+    SCALE_SUFFIX = '_0.25'
+
     method_paths = [
-        ("Method 1", str(_REPO / "images_eval" / "dod_fade")),
-        ("Method 2", str(_REPO / "images_eval" / "dod_sam")),
-        ("Method 3", str(_REPO / "images_eval" / "lol_fade")),
-        ("Method 4", str(_REPO / "images_eval" / "lol_sam")),
+        ("Method 1", str(_REPO / "images" / "output" / "dod_fade")),
+        ("Method 2", str(_REPO / "images" / "output" / "dod_sam")),
+        ("Method 3", str(_REPO / "images" / "output" / "lol_fade")),
+        ("Method 4", str(_REPO / "images" / "output" / "lol_sam")),
     ]
 
     images = [
@@ -215,7 +217,7 @@ if __name__ == "__main__":
     for image_name in images:
 
         original_path = str(
-            _REPO / "images_eval" / "input" / image_name
+            _REPO / "images" / "input" / image_name
         )
 
         original = cv2.imread(original_path)
@@ -246,10 +248,11 @@ if __name__ == "__main__":
         scores = {}
 
         for name, method_dir in method_paths:
-
+            stem = Path(image_name).stem
+            suffix = Path(image_name).suffix
             method_path = os.path.join(
                 method_dir,
-                image_name,
+                f"{stem}{SCALE_SUFFIX}{suffix}",
             )
             print(f"Loading method result: {method_path}")
 
@@ -309,4 +312,44 @@ if __name__ == "__main__":
         )
 
     print(f"\nSaved results to: {result_path}")
+
+    # Merge boundary energy aggregates into metrics.json
+    method_key_map = {
+        "Method 1": "dod_fade",
+        "Method 2": "dod_sam",
+        "Method 3": "lol_fade",
+        "Method 4": "lol_sam",
+    }
+    boundary_agg = {}
+    bg_lap_agg = {}
+    obj_ssim_agg = {}
+    for method_label, method_key in method_key_map.items():
+        raw_Es = []
+        smooths = []
+        objs = []
+        for img_name in images:
+            if img_name not in all_results:
+                continue
+            s = all_results[img_name]["scores"][method_label]
+            edge_score = s["edge_blending"]
+            raw_Es.append(-50.0 * np.log(edge_score))
+            smooth_score = s["background_smoothness"]
+            smooths.append(-30.0 * np.log(smooth_score))
+            objs.append(s["object_preservation"])
+        boundary_agg[method_key] = float(np.mean(raw_Es)) if raw_Es else None
+        bg_lap_agg[method_key] = float(np.mean(smooths)) if smooths else None
+        obj_ssim_agg[method_key] = float(np.mean(objs)) if objs else None
+
+    metrics_path = _REPO / "results" / "metrics.json"
+    metrics = {}
+    if metrics_path.exists():
+        try:
+            metrics = json.loads(metrics_path.read_text())
+        except Exception:
+            metrics = {}
+    metrics["boundary_energy"] = boundary_agg
+    metrics["background_laplacian"] = bg_lap_agg
+    metrics["object_ssim"] = obj_ssim_agg
+    metrics_path.write_text(json.dumps(metrics, indent=2))
+    print(f"Merged boundary/smoothness/object scores into: {metrics_path}")
     
