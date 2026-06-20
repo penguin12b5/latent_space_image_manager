@@ -127,7 +127,7 @@ The script evaluates all four methods across the 11 benchmark images (`car1-3`, 
 ### 3.4 Outputs
 
 - `results/evaluate_image_blending_result.json`: Per-image scores (edge blending, background smoothness, object preservation, Q_img composite) for each method, plus per-image winners. This is the primary source for Table 5 (per-image Q_img) in the paper.
-- `results/metrics.json` (merged): Adds `boundary_energy`, `background_laplacian`, and `object_ssim` aggregates so that downstream scripts (notably `eval_metrics.py`) can compute $Q_{\text{agg}}$ with real boundary values.
+- `results/metrics.json` (merged): Adds `boundary_energy` (boundary error $E$), `background_laplacian`, and `object_ssim` aggregates so that downstream scripts (notably `eval_metrics.py`) can compute $Q_{\text{agg}}$ with real boundary values.
 
 ---
 
@@ -185,11 +185,11 @@ The same IoU value is reported for DOD-SAM and LOL-SAM (identical mask), and for
 
 ---
 
-## 6. Boundary Energy Augmentation: `augment_metrics_with_masks.py`
+## 6. Boundary Error Augmentation: `augment_metrics_with_masks.py`
 
 This script augments the `metrics.json` file with three additional per-method metrics. It reads method results from `images_eval/<method>/` and ground-truth masks from `images/masks/`:
 
-- **Boundary Energy**: Mean gradient magnitude within a 4-pixel morphological boundary band. Reported as raw value (not exponentially decayed).
+- **Boundary Error ($E$)**: RMSE of image gradients within a 4-pixel morphological boundary band (8-pixel total width). Reported as raw value (not exponentially decayed); lower values indicate smoother seam integration. Note: the code variable is named `boundary_energy` but corresponds to Boundary error $E$ in the paper.
 - **Background Laplacian**: Mean absolute Laplacian in the background region (raw high-frequency energy).
 - **Object SSIM**: Structural similarity restricted to the object bounding box.
 
