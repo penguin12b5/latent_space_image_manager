@@ -369,8 +369,6 @@ def main():
         image_path = str(_REPO / "images" / "input" / img_name)
 
         if not os.path.exists(image_path):
-            image_path = str(_REPO / "images_eval" / "input" / img_name)
-        if not os.path.exists(image_path):
             print(f"Skipping {img_name}: not found")
             continue
 
