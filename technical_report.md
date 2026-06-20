@@ -252,7 +252,7 @@ where $\bar{|L|}$ is the mean absolute Laplacian (high-frequency energy) restric
 
 ### 8.4 Outputs
 
-- 110 ablation images in `images_ablation_study/`.
+- 110 ablation images in `images/output/ablation/`.
 - Full per-image results in `results/stylization_ablation_results.json`.
 - Aggregated CSV summary in `results/stylization_ablation_summary.csv`.
 
