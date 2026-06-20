@@ -3,109 +3,109 @@
     "image": "car1.png",
     "ablations": {
       "latent_alpha_0.0": {
-        "edge_blending": 0.7886589169502258,
-        "background_smoothness": 0.6897268891334534,
-        "object_preservation": 0.45927863954736414,
-        "stylization_strength": 0.26541733741760254,
+        "edge_blending": 0.7886303663253784,
+        "background_smoothness": 0.6897010803222656,
+        "object_preservation": 0.45926397824892057,
+        "stylization_strength": 0.26544246077537537,
         "latent_stats": {
-          "mean": 0.5004869103431702,
-          "std": 3.571220874786377,
-          "skewness": -0.03951343192183018,
-          "min": -15.171439170837402,
-          "max": 15.284289360046387,
-          "frac_outside_1": 0.79949951171875,
-          "frac_outside_3": 0.4170328676700592
+          "mean": 0.500484049320221,
+          "std": 3.5712084770202637,
+          "skewness": -0.03951518092050458,
+          "min": -15.171452522277832,
+          "max": 15.28434944152832,
+          "frac_outside_1": 0.7995198369026184,
+          "frac_outside_3": 0.41705322265625
         }
       },
       "latent_alpha_0.5": {
-        "edge_blending": 0.7820976972579956,
-        "background_smoothness": 0.6894770264625549,
-        "object_preservation": 0.4601452021082575,
-        "stylization_strength": 0.2619653046131134,
+        "edge_blending": 0.7820953130722046,
+        "background_smoothness": 0.6892624497413635,
+        "object_preservation": 0.4601470421172993,
+        "stylization_strength": 0.2621276080608368,
         "latent_stats": {
-          "mean": 0.5117542743682861,
-          "std": 3.5638980865478516,
-          "skewness": -0.037695061100885566,
-          "min": -15.171152114868164,
-          "max": 15.28430461883545,
-          "frac_outside_1": 0.7995402216911316,
-          "frac_outside_3": 0.4164021909236908
+          "mean": 0.5114555954933167,
+          "std": 3.5638508796691895,
+          "skewness": -0.03770821541017829,
+          "min": -15.171058654785156,
+          "max": 15.284279823303223,
+          "frac_outside_1": 0.7995198369026184,
+          "frac_outside_3": 0.4163411557674408
         }
       },
       "latent_alpha_1.0": {
-        "edge_blending": 0.761699378490448,
-        "background_smoothness": 0.690251350402832,
-        "object_preservation": 0.4589735096202467,
-        "stylization_strength": 0.26129406690597534,
+        "edge_blending": 0.7620856761932373,
+        "background_smoothness": 0.6903316378593445,
+        "object_preservation": 0.458895950496822,
+        "stylization_strength": 0.26112353801727295,
         "latent_stats": {
-          "mean": 0.5230260491371155,
-          "std": 3.601529836654663,
-          "skewness": -0.08247700791809154,
-          "min": -16.1734619140625,
-          "max": 15.28434944152832,
-          "frac_outside_1": 0.8006388545036316,
+          "mean": 0.5224640965461731,
+          "std": 3.602034091949463,
+          "skewness": -0.08244961855763867,
+          "min": -16.173267364501953,
+          "max": 15.284286499023438,
+          "frac_outside_1": 0.8004557490348816,
           "frac_outside_3": 0.4193929135799408
         }
       },
       "latent_alpha_1.5": {
-        "edge_blending": 0.7194291949272156,
-        "background_smoothness": 0.7001135945320129,
-        "object_preservation": 0.4545312249530971,
-        "stylization_strength": 0.2555534243583679,
+        "edge_blending": 0.7222434282302856,
+        "background_smoothness": 0.7004672288894653,
+        "object_preservation": 0.45448689663504255,
+        "stylization_strength": 0.2549516558647156,
         "latent_stats": {
-          "mean": 0.5342528820037842,
-          "std": 3.682657241821289,
-          "skewness": -0.15748592702839292,
-          "min": -21.723827362060547,
-          "max": 15.284317016601562,
-          "frac_outside_1": 0.8021647334098816,
-          "frac_outside_3": 0.4222005307674408
+          "mean": 0.5334381461143494,
+          "std": 3.6843247413635254,
+          "skewness": -0.15746456010360807,
+          "min": -21.723892211914062,
+          "max": 15.284343719482422,
+          "frac_outside_1": 0.8019612431526184,
+          "frac_outside_3": 0.4222615659236908
         }
       },
       "latent_alpha_2.0": {
-        "edge_blending": 0.6607449054718018,
-        "background_smoothness": 0.7047432065010071,
-        "object_preservation": 0.44996459901220537,
-        "stylization_strength": 0.2716057300567627,
+        "edge_blending": 0.6652585864067078,
+        "background_smoothness": 0.7040928602218628,
+        "object_preservation": 0.4499918888454029,
+        "stylization_strength": 0.27150774002075195,
         "latent_stats": {
-          "mean": 0.5454909801483154,
-          "std": 3.8046865463256836,
-          "skewness": -0.24270740114572262,
-          "min": -29.025136947631836,
-          "max": 21.635499954223633,
-          "frac_outside_1": 0.80279541015625,
-          "frac_outside_3": 0.42462158203125
+          "mean": 0.5443603992462158,
+          "std": 3.8078463077545166,
+          "skewness": -0.2428634989156668,
+          "min": -29.02556800842285,
+          "max": 21.635433197021484,
+          "frac_outside_1": 0.802734375,
+          "frac_outside_3": 0.4247640073299408
         }
       },
       "pixel_alpha_1.5": {
-        "edge_blending": 0.2854483425617218,
-        "background_smoothness": 0.8528256416320801,
-        "object_preservation": 0.5472323026798646,
-        "stylization_strength": 0.11310671269893646
+        "edge_blending": 0.2837338447570801,
+        "background_smoothness": 0.8526062369346619,
+        "object_preservation": 0.5476638968021361,
+        "stylization_strength": 0.11431575566530228
       },
       "pixel_alpha_2.0": {
-        "edge_blending": 0.2722119688987732,
-        "background_smoothness": 0.8467613458633423,
-        "object_preservation": 0.5396255372004615,
-        "stylization_strength": 0.12411999702453613
+        "edge_blending": 0.27119797468185425,
+        "background_smoothness": 0.8466808795928955,
+        "object_preservation": 0.5399726305941108,
+        "stylization_strength": 0.12555904686450958
       },
       "filter_unsharp": {
         "edge_blending": 0.016826869919896126,
-        "background_smoothness": 0.1980009526014328,
+        "background_smoothness": 0.1980009377002716,
         "object_preservation": 0.9564410497092267,
         "stylization_strength": 1.4726346731185913
       },
       "filter_bilateral": {
-        "edge_blending": 0.09904306381940842,
-        "background_smoothness": 0.5237629413604736,
+        "edge_blending": 0.09904305636882782,
+        "background_smoothness": 0.5237627029418945,
         "object_preservation": 0.8936579806618454,
         "stylization_strength": 0.6231109499931335
       },
       "filter_clahe": {
-        "edge_blending": 0.019095323979854584,
-        "background_smoothness": 0.1573610156774521,
-        "object_preservation": 0.8727974519320747,
-        "stylization_strength": 1.6279634237289429
+        "edge_blending": 0.019095510244369507,
+        "background_smoothness": 0.15736167132854462,
+        "object_preservation": 0.8727976198247158,
+        "stylization_strength": 1.6279670000076294
       }
     }
   },
@@ -113,109 +113,109 @@
     "image": "car2.png",
     "ablations": {
       "latent_alpha_0.0": {
-        "edge_blending": 0.7146450877189636,
-        "background_smoothness": 0.7249825596809387,
-        "object_preservation": 0.36727818543373364,
-        "stylization_strength": 0.4775979518890381,
+        "edge_blending": 0.7146390676498413,
+        "background_smoothness": 0.724985659122467,
+        "object_preservation": 0.3672888848039429,
+        "stylization_strength": 0.47756099700927734,
         "latent_stats": {
-          "mean": 0.1898006945848465,
-          "std": 3.1343324184417725,
-          "skewness": 0.028183040926001653,
-          "min": -14.286924362182617,
-          "max": 12.525097846984863,
-          "frac_outside_1": 0.7211506962776184,
-          "frac_outside_3": 0.3084716796875
+          "mean": 0.18980281054973602,
+          "std": 3.1343250274658203,
+          "skewness": 0.028120636389933926,
+          "min": -14.286784172058105,
+          "max": 12.525056838989258,
+          "frac_outside_1": 0.72113037109375,
+          "frac_outside_3": 0.30841064453125
         }
       },
       "latent_alpha_0.5": {
-        "edge_blending": 0.7030019164085388,
-        "background_smoothness": 0.723578691482544,
-        "object_preservation": 0.3674741872526492,
-        "stylization_strength": 0.4739653766155243,
+        "edge_blending": 0.7029092907905579,
+        "background_smoothness": 0.7234982848167419,
+        "object_preservation": 0.3673396278444567,
+        "stylization_strength": 0.4742853343486786,
         "latent_stats": {
-          "mean": 0.2067275494337082,
-          "std": 3.1393051147460938,
-          "skewness": 0.004883461888997826,
-          "min": -14.287137985229492,
-          "max": 12.524984359741211,
-          "frac_outside_1": 0.7201334834098816,
-          "frac_outside_3": 0.3074137270450592
+          "mean": 0.20675428211688995,
+          "std": 3.1394503116607666,
+          "skewness": 0.004955068465534371,
+          "min": -14.286941528320312,
+          "max": 12.525157928466797,
+          "frac_outside_1": 0.72021484375,
+          "frac_outside_3": 0.3076171875
         }
       },
       "latent_alpha_1.0": {
-        "edge_blending": 0.6700006723403931,
-        "background_smoothness": 0.7276216149330139,
-        "object_preservation": 0.3551716765849241,
-        "stylization_strength": 0.669063925743103,
+        "edge_blending": 0.6688103079795837,
+        "background_smoothness": 0.727345883846283,
+        "object_preservation": 0.354610969867539,
+        "stylization_strength": 0.6733819246292114,
         "latent_stats": {
-          "mean": 0.22368468344211578,
-          "std": 3.325239658355713,
-          "skewness": -0.042809243312014245,
-          "min": -18.107839584350586,
-          "max": 17.59004020690918,
-          "frac_outside_1": 0.7303059697151184,
-          "frac_outside_3": 0.32733154296875
+          "mean": 0.2236570119857788,
+          "std": 3.3268978595733643,
+          "skewness": -0.04372328490594137,
+          "min": -18.1079158782959,
+          "max": 17.590084075927734,
+          "frac_outside_1": 0.7303873896598816,
+          "frac_outside_3": 0.3275350034236908
         }
       },
       "latent_alpha_1.5": {
-        "edge_blending": 0.610565185546875,
-        "background_smoothness": 0.7294949293136597,
-        "object_preservation": 0.3390598986533696,
-        "stylization_strength": 0.9582028985023499,
+        "edge_blending": 0.6085560917854309,
+        "background_smoothness": 0.7291581034660339,
+        "object_preservation": 0.3384259984865517,
+        "stylization_strength": 0.9625809788703918,
         "latent_stats": {
-          "mean": 0.240571066737175,
-          "std": 3.664716958999634,
-          "skewness": -0.0698135351320784,
-          "min": -26.702077865600586,
-          "max": 25.565095901489258,
+          "mean": 0.24059711396694183,
+          "std": 3.668872356414795,
+          "skewness": -0.07276608213508087,
+          "min": -26.701580047607422,
+          "max": 25.565662384033203,
           "frac_outside_1": 0.7367350459098816,
-          "frac_outside_3": 0.3421630859375
+          "frac_outside_3": 0.3425699770450592
         }
       },
       "latent_alpha_2.0": {
-        "edge_blending": 0.6007277965545654,
-        "background_smoothness": 0.7444616556167603,
-        "object_preservation": 0.32893876378595893,
-        "stylization_strength": 0.8539198637008667,
+        "edge_blending": 0.5986882448196411,
+        "background_smoothness": 0.7443330883979797,
+        "object_preservation": 0.32843554921099394,
+        "stylization_strength": 0.8565602898597717,
         "latent_stats": {
-          "mean": 0.2575340270996094,
-          "std": 4.119890213012695,
-          "skewness": -0.06533291338171028,
-          "min": -35.39580535888672,
-          "max": 33.53959655761719,
-          "frac_outside_1": 0.740234375,
-          "frac_outside_3": 0.3513997495174408
+          "mean": 0.25748521089553833,
+          "std": 4.127017974853516,
+          "skewness": -0.07073062782610805,
+          "min": -35.39551544189453,
+          "max": 33.5408821105957,
+          "frac_outside_1": 0.74053955078125,
+          "frac_outside_3": 0.3519490659236908
         }
       },
       "pixel_alpha_1.5": {
-        "edge_blending": 0.10824171453714371,
-        "background_smoothness": 0.849530816078186,
-        "object_preservation": 0.6073672536739803,
-        "stylization_strength": 0.4944056570529938
+        "edge_blending": 0.10835891216993332,
+        "background_smoothness": 0.8494450449943542,
+        "object_preservation": 0.6078924578418056,
+        "stylization_strength": 0.49652865529060364
       },
       "pixel_alpha_2.0": {
-        "edge_blending": 0.10467022657394409,
-        "background_smoothness": 0.8479322791099548,
-        "object_preservation": 0.5778981390352822,
-        "stylization_strength": 0.5254801511764526
+        "edge_blending": 0.10487135499715805,
+        "background_smoothness": 0.8477950692176819,
+        "object_preservation": 0.5783088082143713,
+        "stylization_strength": 0.5278050303459167
       },
       "filter_unsharp": {
-        "edge_blending": 0.003844160120934248,
-        "background_smoothness": 0.3550567030906677,
+        "edge_blending": 0.0038441598881036043,
+        "background_smoothness": 0.35505667328834534,
         "object_preservation": 0.9463033209055313,
         "stylization_strength": 1.4858778715133667
       },
       "filter_bilateral": {
-        "edge_blending": 0.0291193425655365,
+        "edge_blending": 0.02911934070289135,
         "background_smoothness": 0.6927713751792908,
-        "object_preservation": 0.9049746964576367,
-        "stylization_strength": 0.7096750736236572
+        "object_preservation": 0.9049745630683674,
+        "stylization_strength": 0.7096747159957886
       },
       "filter_clahe": {
-        "edge_blending": 0.013880320824682713,
-        "background_smoothness": 0.2617126405239105,
-        "object_preservation": 0.9003856230558495,
-        "stylization_strength": 1.3847568035125732
+        "edge_blending": 0.013880288228392601,
+        "background_smoothness": 0.2617117762565613,
+        "object_preservation": 0.9003856383738379,
+        "stylization_strength": 1.38475501537323
       }
     }
   },
@@ -223,91 +223,91 @@
     "image": "car3.png",
     "ablations": {
       "latent_alpha_0.0": {
-        "edge_blending": 0.7543423771858215,
-        "background_smoothness": 0.8036720156669617,
-        "object_preservation": 0.28976875717409273,
-        "stylization_strength": 0.22546811401844025,
+        "edge_blending": 0.7543742656707764,
+        "background_smoothness": 0.8036877512931824,
+        "object_preservation": 0.289770929629531,
+        "stylization_strength": 0.22545760869979858,
         "latent_stats": {
-          "mean": 2.193990707397461,
-          "std": 3.253293514251709,
-          "skewness": -0.13775860931659642,
-          "min": -9.982321739196777,
-          "max": 15.826115608215332,
-          "frac_outside_1": 0.8192383050918579,
-          "frac_outside_3": 0.4850390553474426
+          "mean": 2.1939895153045654,
+          "std": 3.2532691955566406,
+          "skewness": -0.13774730980590827,
+          "min": -9.982535362243652,
+          "max": 15.825642585754395,
+          "frac_outside_1": 0.8191797137260437,
+          "frac_outside_3": 0.4850781261920929
         }
       },
       "latent_alpha_0.5": {
-        "edge_blending": 0.7533934116363525,
-        "background_smoothness": 0.802715539932251,
-        "object_preservation": 0.2904803420202978,
-        "stylization_strength": 0.2287195324897766,
+        "edge_blending": 0.7533722519874573,
+        "background_smoothness": 0.8027107119560242,
+        "object_preservation": 0.29041598025604365,
+        "stylization_strength": 0.22923043370246887,
         "latent_stats": {
-          "mean": 2.1981611251831055,
-          "std": 3.2409887313842773,
-          "skewness": -0.11648290475126602,
-          "min": -9.982187271118164,
-          "max": 15.825958251953125,
-          "frac_outside_1": 0.8177734613418579,
-          "frac_outside_3": 0.48246094584465027
+          "mean": 2.198439598083496,
+          "std": 3.2403032779693604,
+          "skewness": -0.11548205294329288,
+          "min": -9.761161804199219,
+          "max": 15.826111793518066,
+          "frac_outside_1": 0.8176171779632568,
+          "frac_outside_3": 0.48244139552116394
         }
       },
       "latent_alpha_1.0": {
-        "edge_blending": 0.74954754114151,
-        "background_smoothness": 0.8037347197532654,
-        "object_preservation": 0.2870482428547176,
-        "stylization_strength": 0.2529076337814331,
+        "edge_blending": 0.7496039867401123,
+        "background_smoothness": 0.8037330508232117,
+        "object_preservation": 0.2867745338688443,
+        "stylization_strength": 0.2553226351737976,
         "latent_stats": {
-          "mean": 2.202319622039795,
-          "std": 3.293426036834717,
-          "skewness": -0.15318772398571875,
-          "min": -12.06224250793457,
-          "max": 15.825957298278809,
-          "frac_outside_1": 0.8209570050239563,
-          "frac_outside_3": 0.4879687428474426
+          "mean": 2.202950954437256,
+          "std": 3.294088840484619,
+          "skewness": -0.15521111854190917,
+          "min": -12.438911437988281,
+          "max": 15.826055526733398,
+          "frac_outside_1": 0.8211718797683716,
+          "frac_outside_3": 0.48808592557907104
         }
       },
       "latent_alpha_1.5": {
-        "edge_blending": 0.7516130208969116,
-        "background_smoothness": 0.8101255297660828,
-        "object_preservation": 0.28269228230838783,
-        "stylization_strength": 0.27733439207077026,
+        "edge_blending": 0.7512206435203552,
+        "background_smoothness": 0.8102601766586304,
+        "object_preservation": 0.28225281890608184,
+        "stylization_strength": 0.28354865312576294,
         "latent_stats": {
-          "mean": 2.2064826488494873,
-          "std": 3.407609462738037,
-          "skewness": -0.22553404033020108,
-          "min": -19.52108383178711,
-          "max": 19.054157257080078,
-          "frac_outside_1": 0.8223828077316284,
-          "frac_outside_3": 0.4932617247104645
+          "mean": 2.2074429988861084,
+          "std": 3.4115357398986816,
+          "skewness": -0.23235885185335786,
+          "min": -19.521963119506836,
+          "max": 19.05491828918457,
+          "frac_outside_1": 0.8226171731948853,
+          "frac_outside_3": 0.4935546815395355
         }
       },
       "latent_alpha_2.0": {
-        "edge_blending": 0.7560316324234009,
-        "background_smoothness": 0.8105372786521912,
-        "object_preservation": 0.2802027101349085,
-        "stylization_strength": 0.3028140068054199,
+        "edge_blending": 0.7556135654449463,
+        "background_smoothness": 0.8104370832443237,
+        "object_preservation": 0.2798717406322377,
+        "stylization_strength": 0.31002986431121826,
         "latent_stats": {
-          "mean": 2.2106385231018066,
-          "std": 3.577648162841797,
-          "skewness": -0.3051120026171831,
-          "min": -26.981826782226562,
-          "max": 27.131607055664062,
-          "frac_outside_1": 0.8235546946525574,
-          "frac_outside_3": 0.4969531297683716
+          "mean": 2.2118799686431885,
+          "std": 3.5863077640533447,
+          "skewness": -0.3162843542110665,
+          "min": -26.981870651245117,
+          "max": 27.132402420043945,
+          "frac_outside_1": 0.8238281011581421,
+          "frac_outside_3": 0.49726563692092896
         }
       },
       "pixel_alpha_1.5": {
-        "edge_blending": 0.40479016304016113,
-        "background_smoothness": 0.8987392783164978,
-        "object_preservation": 0.2947756797169168,
-        "stylization_strength": 0.1514589786529541
+        "edge_blending": 0.4048353433609009,
+        "background_smoothness": 0.8987672328948975,
+        "object_preservation": 0.2950610928780065,
+        "stylization_strength": 0.1545681208372116
       },
       "pixel_alpha_2.0": {
-        "edge_blending": 0.40449756383895874,
-        "background_smoothness": 0.8987154960632324,
-        "object_preservation": 0.2922129886751835,
-        "stylization_strength": 0.16851067543029785
+        "edge_blending": 0.4044961631298065,
+        "background_smoothness": 0.8987188935279846,
+        "object_preservation": 0.2924721673964367,
+        "stylization_strength": 0.17269344627857208
       },
       "filter_unsharp": {
         "edge_blending": 0.052666664123535156,
@@ -317,15 +317,15 @@
       },
       "filter_bilateral": {
         "edge_blending": 0.26170024275779724,
-        "background_smoothness": 0.8366780877113342,
-        "object_preservation": 0.7316957096054376,
+        "background_smoothness": 0.8366776704788208,
+        "object_preservation": 0.731695769021731,
         "stylization_strength": 0.3237434923648834
       },
       "filter_clahe": {
-        "edge_blending": 0.03040802665054798,
-        "background_smoothness": 0.4034120738506317,
-        "object_preservation": 0.7719093754852412,
-        "stylization_strength": 2.0349857807159424
+        "edge_blending": 0.030407678335905075,
+        "background_smoothness": 0.40341082215309143,
+        "object_preservation": 0.7719093141849047,
+        "stylization_strength": 2.0349860191345215
       }
     }
   },
@@ -333,109 +333,109 @@
     "image": "cat1.png",
     "ablations": {
       "latent_alpha_0.0": {
-        "edge_blending": 0.806297779083252,
-        "background_smoothness": 0.7580323219299316,
-        "object_preservation": 0.22615700382655898,
-        "stylization_strength": 0.23822997510433197,
+        "edge_blending": 0.8063066601753235,
+        "background_smoothness": 0.758034348487854,
+        "object_preservation": 0.22615377607889364,
+        "stylization_strength": 0.23804333806037903,
         "latent_stats": {
-          "mean": -0.14639972150325775,
-          "std": 2.7683308124542236,
-          "skewness": 0.04061376601218061,
-          "min": -11.669841766357422,
-          "max": 11.630735397338867,
-          "frac_outside_1": 0.7230049967765808,
-          "frac_outside_3": 0.2786458432674408
+          "mean": -0.1463204324245453,
+          "std": 2.768193483352661,
+          "skewness": 0.04055120993082916,
+          "min": -11.672087669372559,
+          "max": 11.630911827087402,
+          "frac_outside_1": 0.72265625,
+          "frac_outside_3": 0.2785760760307312
         }
       },
       "latent_alpha_0.5": {
-        "edge_blending": 0.7897167205810547,
-        "background_smoothness": 0.7550174593925476,
-        "object_preservation": 0.22816320410118116,
-        "stylization_strength": 0.2433868944644928,
+        "edge_blending": 0.7897106409072876,
+        "background_smoothness": 0.7550796270370483,
+        "object_preservation": 0.22826519790742822,
+        "stylization_strength": 0.24315984547138214,
         "latent_stats": {
-          "mean": -0.13754074275493622,
-          "std": 2.7678279876708984,
-          "skewness": 0.04389346926150058,
-          "min": -11.668760299682617,
-          "max": 11.631002426147461,
-          "frac_outside_1": 0.7229120135307312,
-          "frac_outside_3": 0.2782505452632904
+          "mean": -0.1371312290430069,
+          "std": 2.768284797668457,
+          "skewness": 0.042512659426432134,
+          "min": -11.669534683227539,
+          "max": 11.630952835083008,
+          "frac_outside_1": 0.7227957844734192,
+          "frac_outside_3": 0.278413325548172
         }
       },
       "latent_alpha_1.0": {
-        "edge_blending": 0.7510867118835449,
-        "background_smoothness": 0.7536923289299011,
-        "object_preservation": 0.22815485713514738,
-        "stylization_strength": 0.2578357756137848,
+        "edge_blending": 0.7508060336112976,
+        "background_smoothness": 0.7534537315368652,
+        "object_preservation": 0.22816715417008304,
+        "stylization_strength": 0.25781434774398804,
         "latent_stats": {
-          "mean": -0.12878243625164032,
-          "std": 2.8248379230499268,
-          "skewness": 0.06700182088537583,
-          "min": -11.670879364013672,
-          "max": 16.409420013427734,
-          "frac_outside_1": 0.7260277271270752,
-          "frac_outside_3": 0.285737544298172
+          "mean": -0.1280551254749298,
+          "std": 2.826292037963867,
+          "skewness": 0.0642607605794054,
+          "min": -11.669078826904297,
+          "max": 16.409440994262695,
+          "frac_outside_1": 0.726190447807312,
+          "frac_outside_3": 0.2860165536403656
         }
       },
       "latent_alpha_1.5": {
-        "edge_blending": 0.6704872846603394,
-        "background_smoothness": 0.7367662191390991,
-        "object_preservation": 0.22628421495528028,
-        "stylization_strength": 0.26415565609931946,
+        "edge_blending": 0.6696335673332214,
+        "background_smoothness": 0.735828161239624,
+        "object_preservation": 0.22605271799941004,
+        "stylization_strength": 0.26363131403923035,
         "latent_stats": {
-          "mean": -0.12024784088134766,
-          "std": 2.936220169067383,
-          "skewness": 0.12906900826135795,
-          "min": -15.972530364990234,
-          "max": 23.622730255126953,
-          "frac_outside_1": 0.7288411259651184,
-          "frac_outside_3": 0.2920154333114624
+          "mean": -0.11895225942134857,
+          "std": 2.9389874935150146,
+          "skewness": 0.12554707336768317,
+          "min": -15.97162914276123,
+          "max": 23.624351501464844,
+          "frac_outside_1": 0.7287713885307312,
+          "frac_outside_3": 0.2919689416885376
         }
       },
       "latent_alpha_2.0": {
-        "edge_blending": 0.5856930017471313,
-        "background_smoothness": 0.714722216129303,
-        "object_preservation": 0.22254316897978998,
-        "stylization_strength": 0.27980124950408936,
+        "edge_blending": 0.584561288356781,
+        "background_smoothness": 0.7149121761322021,
+        "object_preservation": 0.22233176338292407,
+        "stylization_strength": 0.2784537672996521,
         "latent_stats": {
-          "mean": -0.11145447194576263,
-          "std": 3.0957653522491455,
-          "skewness": 0.23199374447810814,
-          "min": -22.020315170288086,
-          "max": 30.843809127807617,
-          "frac_outside_1": 0.7303757667541504,
-          "frac_outside_3": 0.2960611879825592
+          "mean": -0.1098795086145401,
+          "std": 3.1006550788879395,
+          "skewness": 0.2280331208955532,
+          "min": -22.020227432250977,
+          "max": 30.83869171142578,
+          "frac_outside_1": 0.7302362322807312,
+          "frac_outside_3": 0.296200692653656
         }
       },
       "pixel_alpha_1.5": {
-        "edge_blending": 0.24714836478233337,
-        "background_smoothness": 0.8286017775535583,
-        "object_preservation": 0.26414984633849664,
-        "stylization_strength": 0.1484708935022354
+        "edge_blending": 0.24545252323150635,
+        "background_smoothness": 0.8291428089141846,
+        "object_preservation": 0.26396517408130094,
+        "stylization_strength": 0.1479996293783188
       },
       "pixel_alpha_2.0": {
-        "edge_blending": 0.249595046043396,
-        "background_smoothness": 0.8247033357620239,
-        "object_preservation": 0.2613648113828886,
-        "stylization_strength": 0.1497415155172348
+        "edge_blending": 0.24862053990364075,
+        "background_smoothness": 0.8254034519195557,
+        "object_preservation": 0.261116710402557,
+        "stylization_strength": 0.14873170852661133
       },
       "filter_unsharp": {
         "edge_blending": 0.011183607392013073,
-        "background_smoothness": 0.2542984187602997,
+        "background_smoothness": 0.2542983889579773,
         "object_preservation": 0.9440756076792676,
         "stylization_strength": 1.4778907299041748
       },
       "filter_bilateral": {
-        "edge_blending": 0.0658719539642334,
+        "edge_blending": 0.065871961414814,
         "background_smoothness": 0.5470173954963684,
         "object_preservation": 0.8986395729804567,
         "stylization_strength": 0.6280826926231384
       },
       "filter_clahe": {
-        "edge_blending": 0.016157783567905426,
-        "background_smoothness": 0.24322932958602905,
-        "object_preservation": 0.8906214454994417,
-        "stylization_strength": 1.4230440855026245
+        "edge_blending": 0.016157785430550575,
+        "background_smoothness": 0.24323002994060516,
+        "object_preservation": 0.8906214731243233,
+        "stylization_strength": 1.4230411052703857
       }
     }
   },
@@ -443,109 +443,109 @@
     "image": "cat2.png",
     "ablations": {
       "latent_alpha_0.0": {
-        "edge_blending": 0.7771134376525879,
-        "background_smoothness": 0.7817639708518982,
-        "object_preservation": 0.2753455225844356,
-        "stylization_strength": 0.25598686933517456,
+        "edge_blending": 0.7771113514900208,
+        "background_smoothness": 0.7817705869674683,
+        "object_preservation": 0.27535478925074947,
+        "stylization_strength": 0.2558939456939697,
         "latent_stats": {
-          "mean": 0.12841914594173431,
-          "std": 3.254638433456421,
-          "skewness": -0.26006249192704906,
-          "min": -15.815742492675781,
-          "max": 15.004448890686035,
-          "frac_outside_1": 0.7533714771270752,
-          "frac_outside_3": 0.3367978036403656
+          "mean": 0.12835533916950226,
+          "std": 3.2545952796936035,
+          "skewness": -0.26002337426520855,
+          "min": -15.817055702209473,
+          "max": 15.003622055053711,
+          "frac_outside_1": 0.7532784342765808,
+          "frac_outside_3": 0.3367047905921936
         }
       },
       "latent_alpha_0.5": {
-        "edge_blending": 0.6868169903755188,
-        "background_smoothness": 0.7713289260864258,
-        "object_preservation": 0.2874205615048456,
-        "stylization_strength": 0.364672988653183,
+        "edge_blending": 0.6741408109664917,
+        "background_smoothness": 0.7649133801460266,
+        "object_preservation": 0.289386964356281,
+        "stylization_strength": 0.3725065588951111,
         "latent_stats": {
-          "mean": 0.18708355724811554,
-          "std": 3.252925395965576,
-          "skewness": -0.2493348773071057,
-          "min": -15.814888000488281,
-          "max": 15.003296852111816,
-          "frac_outside_1": 0.7574172019958496,
-          "frac_outside_3": 0.340727299451828
+          "mean": 0.1787516325712204,
+          "std": 3.273588180541992,
+          "skewness": -0.25720116919307684,
+          "min": -15.815301895141602,
+          "max": 15.00330924987793,
+          "frac_outside_1": 0.757998526096344,
+          "frac_outside_3": 0.3421688973903656
         }
       },
       "latent_alpha_1.0": {
-        "edge_blending": 0.47330784797668457,
-        "background_smoothness": 0.7203464508056641,
-        "object_preservation": 0.2936969110155742,
-        "stylization_strength": 0.7504919767379761,
+        "edge_blending": 0.4074309766292572,
+        "background_smoothness": 0.6815866231918335,
+        "object_preservation": 0.3028157680390162,
+        "stylization_strength": 0.7601540684700012,
         "latent_stats": {
-          "mean": 0.2437250018119812,
-          "std": 3.4969840049743652,
-          "skewness": -0.16044257189794886,
-          "min": -17.98568344116211,
-          "max": 22.72400665283203,
-          "frac_outside_1": 0.769833505153656,
-          "frac_outside_3": 0.367978036403656
+          "mean": 0.22646014392375946,
+          "std": 3.6045420169830322,
+          "skewness": -0.22093934568266407,
+          "min": -17.985544204711914,
+          "max": 22.723901748657227,
+          "frac_outside_1": 0.774716317653656,
+          "frac_outside_3": 0.3776041567325592
         }
       },
       "latent_alpha_1.5": {
-        "edge_blending": 0.2462214231491089,
-        "background_smoothness": 0.6832524538040161,
-        "object_preservation": 0.26171642203297846,
-        "stylization_strength": 1.1664221286773682,
+        "edge_blending": 0.19398340582847595,
+        "background_smoothness": 0.6514654159545898,
+        "object_preservation": 0.2737557323805571,
+        "stylization_strength": 1.0156134366989136,
         "latent_stats": {
-          "mean": 0.2980507016181946,
-          "std": 3.93325138092041,
-          "skewness": -0.005183910157571516,
-          "min": -26.38827896118164,
-          "max": 32.49207305908203,
-          "frac_outside_1": 0.7790411114692688,
-          "frac_outside_3": 0.3946475088596344
+          "mean": 0.27160581946372986,
+          "std": 4.170718669891357,
+          "skewness": -0.14785325535690766,
+          "min": -26.38780403137207,
+          "max": 32.490543365478516,
+          "frac_outside_1": 0.7858538031578064,
+          "frac_outside_3": 0.4106212854385376
         }
       },
       "latent_alpha_2.0": {
-        "edge_blending": 0.13832123577594757,
-        "background_smoothness": 0.7034192085266113,
-        "object_preservation": 0.232213345408619,
-        "stylization_strength": 1.1599327325820923,
+        "edge_blending": 0.1048986092209816,
+        "background_smoothness": 0.6855049133300781,
+        "object_preservation": 0.24141284940694166,
+        "stylization_strength": 0.9585573673248291,
         "latent_stats": {
-          "mean": 0.3502171039581299,
-          "std": 4.522411346435547,
-          "skewness": 0.1393839757514403,
-          "min": -34.791351318359375,
-          "max": 42.258583068847656,
-          "frac_outside_1": 0.7861793041229248,
-          "frac_outside_3": 0.4150855541229248
+          "mean": 0.31440240144729614,
+          "std": 4.910363674163818,
+          "skewness": -0.0774262518348618,
+          "min": -34.79298400878906,
+          "max": 42.261348724365234,
+          "frac_outside_1": 0.7951776385307312,
+          "frac_outside_3": 0.4350353479385376
         }
       },
       "pixel_alpha_1.5": {
-        "edge_blending": 0.12119589745998383,
-        "background_smoothness": 0.7590165734291077,
-        "object_preservation": 0.2476570162860813,
-        "stylization_strength": 0.8103444576263428
+        "edge_blending": 0.09981869906187057,
+        "background_smoothness": 0.689638078212738,
+        "object_preservation": 0.2460300950855111,
+        "stylization_strength": 0.841184139251709
       },
       "pixel_alpha_2.0": {
-        "edge_blending": 0.10157055407762527,
-        "background_smoothness": 0.731511652469635,
-        "object_preservation": 0.239222262364123,
-        "stylization_strength": 0.8023369908332825
+        "edge_blending": 0.08440335094928741,
+        "background_smoothness": 0.6547583341598511,
+        "object_preservation": 0.2373173060785625,
+        "stylization_strength": 0.8359676003456116
       },
       "filter_unsharp": {
-        "edge_blending": 0.012574169784784317,
+        "edge_blending": 0.012574170716106892,
         "background_smoothness": 0.40703457593917847,
         "object_preservation": 0.952498904945261,
         "stylization_strength": 1.466542363166809
       },
       "filter_bilateral": {
         "edge_blending": 0.07942792028188705,
-        "background_smoothness": 0.6645129919052124,
-        "object_preservation": 0.8948280958552786,
+        "background_smoothness": 0.6645128726959229,
+        "object_preservation": 0.8948283243711961,
         "stylization_strength": 0.4900621473789215
       },
       "filter_clahe": {
-        "edge_blending": 0.014720981009304523,
-        "background_smoothness": 0.39935770630836487,
-        "object_preservation": 0.8756830348028545,
-        "stylization_strength": 1.4811961650848389
+        "edge_blending": 0.014720924198627472,
+        "background_smoothness": 0.39935722947120667,
+        "object_preservation": 0.875682935703841,
+        "stylization_strength": 1.481197714805603
       }
     }
   },
@@ -553,109 +553,109 @@
     "image": "cat3.png",
     "ablations": {
       "latent_alpha_0.0": {
-        "edge_blending": 0.7704145908355713,
-        "background_smoothness": 0.8367564082145691,
-        "object_preservation": 0.4837635698164175,
-        "stylization_strength": 0.2751029431819916,
+        "edge_blending": 0.7703839540481567,
+        "background_smoothness": 0.8367568850517273,
+        "object_preservation": 0.4837583689740032,
+        "stylization_strength": 0.2751712501049042,
         "latent_stats": {
-          "mean": 0.38290897011756897,
-          "std": 3.3268043994903564,
-          "skewness": 0.09660095387310687,
-          "min": -12.23404598236084,
-          "max": 12.355765342712402,
-          "frac_outside_1": 0.7449079155921936,
-          "frac_outside_3": 0.3607933521270752
+          "mean": 0.38298720121383667,
+          "std": 3.3267996311187744,
+          "skewness": 0.09656525648387913,
+          "min": -12.234335899353027,
+          "max": 12.355972290039062,
+          "frac_outside_1": 0.744814932346344,
+          "frac_outside_3": 0.3608630895614624
         }
       },
       "latent_alpha_0.5": {
-        "edge_blending": 0.7303348183631897,
-        "background_smoothness": 0.8180705308914185,
-        "object_preservation": 0.49252145814998144,
-        "stylization_strength": 0.2996631860733032,
+        "edge_blending": 0.7233508229255676,
+        "background_smoothness": 0.8181455731391907,
+        "object_preservation": 0.49306856088154527,
+        "stylization_strength": 0.3007998764514923,
         "latent_stats": {
-          "mean": 0.36235323548316956,
-          "std": 3.3519184589385986,
-          "skewness": 0.0889140330247741,
-          "min": -12.774091720581055,
-          "max": 12.356000900268555,
-          "frac_outside_1": 0.745233416557312,
-          "frac_outside_3": 0.3617001473903656
+          "mean": 0.3603619337081909,
+          "std": 3.3528356552124023,
+          "skewness": 0.08833252867227115,
+          "min": -12.774532318115234,
+          "max": 12.356098175048828,
+          "frac_outside_1": 0.7456287145614624,
+          "frac_outside_3": 0.3618861734867096
         }
       },
       "latent_alpha_1.0": {
-        "edge_blending": 0.6191297173500061,
-        "background_smoothness": 0.770792543888092,
-        "object_preservation": 0.4873828908123475,
-        "stylization_strength": 0.34431296586990356,
+        "edge_blending": 0.6041268110275269,
+        "background_smoothness": 0.7697834968566895,
+        "object_preservation": 0.4868907282696783,
+        "stylization_strength": 0.34857177734375,
         "latent_stats": {
-          "mean": 0.3417304754257202,
-          "std": 3.577568292617798,
-          "skewness": 0.0035213560947484905,
-          "min": -15.693163871765137,
-          "max": 16.02511215209961,
-          "frac_outside_1": 0.7553013563156128,
-          "frac_outside_3": 0.384579598903656
+          "mean": 0.33767515420913696,
+          "std": 3.58712100982666,
+          "skewness": -0.0004325614504622356,
+          "min": -15.693170547485352,
+          "max": 16.024873733520508,
+          "frac_outside_1": 0.7561383843421936,
+          "frac_outside_3": 0.385835200548172
         }
       },
       "latent_alpha_1.5": {
-        "edge_blending": 0.4295165240764618,
-        "background_smoothness": 0.6683968305587769,
-        "object_preservation": 0.4530643111538508,
-        "stylization_strength": 0.4007202386856079,
+        "edge_blending": 0.4104034900665283,
+        "background_smoothness": 0.6668134927749634,
+        "object_preservation": 0.45064306551491695,
+        "stylization_strength": 0.4077688455581665,
         "latent_stats": {
-          "mean": 0.32109761238098145,
-          "std": 3.9697258472442627,
-          "skewness": -0.1301216597982464,
-          "min": -23.197084426879883,
-          "max": 22.11104965209961,
-          "frac_outside_1": 0.7670201063156128,
-          "frac_outside_3": 0.4089704155921936
+          "mean": 0.31506580114364624,
+          "std": 3.993242025375366,
+          "skewness": -0.14083362014697423,
+          "min": -23.19713592529297,
+          "max": 22.111772537231445,
+          "frac_outside_1": 0.7680199146270752,
+          "frac_outside_3": 0.4113420844078064
         }
       },
       "latent_alpha_2.0": {
-        "edge_blending": 0.29878512024879456,
-        "background_smoothness": 0.6535320281982422,
-        "object_preservation": 0.42855589375909137,
-        "stylization_strength": 0.37281957268714905,
+        "edge_blending": 0.2783406972885132,
+        "background_smoothness": 0.6529161334037781,
+        "object_preservation": 0.4258579704978484,
+        "stylization_strength": 0.38003990054130554,
         "latent_stats": {
-          "mean": 0.30053070187568665,
-          "std": 4.48482608795166,
-          "skewness": -0.26273764620229745,
-          "min": -31.641559600830078,
-          "max": 28.198406219482422,
-          "frac_outside_1": 0.775995135307312,
-          "frac_outside_3": 0.429292231798172
+          "mean": 0.29244929552078247,
+          "std": 4.5251288414001465,
+          "skewness": -0.2804736340974555,
+          "min": -31.641935348510742,
+          "max": 28.197410583496094,
+          "frac_outside_1": 0.777529776096344,
+          "frac_outside_3": 0.4319661557674408
         }
       },
       "pixel_alpha_1.5": {
-        "edge_blending": 0.12927377223968506,
-        "background_smoothness": 0.7486788034439087,
-        "object_preservation": 0.5309781153444637,
-        "stylization_strength": 0.25201818346977234
+        "edge_blending": 0.12842737138271332,
+        "background_smoothness": 0.7489997148513794,
+        "object_preservation": 0.5324524110487681,
+        "stylization_strength": 0.25634393095970154
       },
       "pixel_alpha_2.0": {
-        "edge_blending": 0.11771563440561295,
-        "background_smoothness": 0.7323675751686096,
-        "object_preservation": 0.5205596323820875,
-        "stylization_strength": 0.2637530267238617
+        "edge_blending": 0.11745728552341461,
+        "background_smoothness": 0.734348475933075,
+        "object_preservation": 0.5221126175472065,
+        "stylization_strength": 0.26872673630714417
       },
       "filter_unsharp": {
-        "edge_blending": 0.022376293316483498,
+        "edge_blending": 0.02237629145383835,
         "background_smoothness": 0.5911020040512085,
         "object_preservation": 0.9630172418374043,
         "stylization_strength": 1.4612376689910889
       },
       "filter_bilateral": {
         "edge_blending": 0.08244248479604721,
-        "background_smoothness": 0.8022334575653076,
-        "object_preservation": 0.9208285689515328,
-        "stylization_strength": 0.5903167128562927
+        "background_smoothness": 0.8022332787513733,
+        "object_preservation": 0.9208286418408566,
+        "stylization_strength": 0.5903149247169495
       },
       "filter_clahe": {
-        "edge_blending": 0.03345920890569687,
-        "background_smoothness": 0.5926461815834045,
-        "object_preservation": 0.9037710144152478,
-        "stylization_strength": 1.528175711631775
+        "edge_blending": 0.03345920518040657,
+        "background_smoothness": 0.592647910118103,
+        "object_preservation": 0.9037710219140564,
+        "stylization_strength": 1.528173804283142
       }
     }
   },
@@ -663,91 +663,91 @@
     "image": "dog1.png",
     "ablations": {
       "latent_alpha_0.0": {
-        "edge_blending": 0.8372725248336792,
-        "background_smoothness": 0.9055192470550537,
-        "object_preservation": 0.7514113467689288,
-        "stylization_strength": 0.367817759513855,
+        "edge_blending": 0.8372711539268494,
+        "background_smoothness": 0.9055229425430298,
+        "object_preservation": 0.7514079932936821,
+        "stylization_strength": 0.36782410740852356,
         "latent_stats": {
-          "mean": 3.0833067893981934,
-          "std": 3.5464837551116943,
-          "skewness": -0.5885469822712152,
+          "mean": 3.0833349227905273,
+          "std": 3.5464954376220703,
+          "skewness": -0.5885415936869127,
           "min": -28.661453247070312,
-          "max": 30.56190299987793,
-          "frac_outside_1": 0.8912869691848755,
-          "frac_outside_3": 0.6434212923049927
+          "max": 30.561901092529297,
+          "frac_outside_1": 0.8912641406059265,
+          "frac_outside_3": 0.6434099078178406
         }
       },
       "latent_alpha_0.5": {
-        "edge_blending": 0.8189651966094971,
-        "background_smoothness": 0.9031062126159668,
-        "object_preservation": 0.7639483284447028,
-        "stylization_strength": 0.4760368764400482,
+        "edge_blending": 0.8178379535675049,
+        "background_smoothness": 0.9030566811561584,
+        "object_preservation": 0.7638947943942058,
+        "stylization_strength": 0.47743722796440125,
         "latent_stats": {
-          "mean": 3.1280603408813477,
-          "std": 3.464627981185913,
-          "skewness": -0.5910238980172305,
-          "min": -36.232566833496094,
-          "max": 34.42395782470703,
-          "frac_outside_1": 0.891948938369751,
-          "frac_outside_3": 0.6454300880432129
+          "mean": 3.1277520656585693,
+          "std": 3.4635255336761475,
+          "skewness": -0.5918931780024516,
+          "min": -36.232574462890625,
+          "max": 34.42396545410156,
+          "frac_outside_1": 0.891926109790802,
+          "frac_outside_3": 0.6455556154251099
         }
       },
       "latent_alpha_1.0": {
-        "edge_blending": 0.7544706463813782,
-        "background_smoothness": 0.9007562398910522,
-        "object_preservation": 0.7512998322106853,
-        "stylization_strength": 0.7250498533248901,
+        "edge_blending": 0.7504000067710876,
+        "background_smoothness": 0.9006323218345642,
+        "object_preservation": 0.7508519341074584,
+        "stylization_strength": 0.7296968102455139,
         "latent_stats": {
-          "mean": 3.1728250980377197,
-          "std": 3.5539374351501465,
-          "skewness": -0.715013864441679,
-          "min": -48.42707824707031,
-          "max": 44.09705352783203,
-          "frac_outside_1": 0.9009883999824524,
-          "frac_outside_3": 0.6607468724250793
+          "mean": 3.172192335128784,
+          "std": 3.5534415245056152,
+          "skewness": -0.7150725767192695,
+          "min": -48.427085876464844,
+          "max": 44.09706497192383,
+          "frac_outside_1": 0.9009655714035034,
+          "frac_outside_3": 0.6607354879379272
         }
       },
       "latent_alpha_1.5": {
-        "edge_blending": 0.6476914882659912,
-        "background_smoothness": 0.8971489071846008,
-        "object_preservation": 0.6829802428562516,
-        "stylization_strength": 1.3513588905334473,
+        "edge_blending": 0.6404693722724915,
+        "background_smoothness": 0.8969807028770447,
+        "object_preservation": 0.6820112419700669,
+        "stylization_strength": 1.3589603900909424,
         "latent_stats": {
-          "mean": 3.2175941467285156,
-          "std": 3.8023674488067627,
-          "skewness": -0.8647070920144165,
-          "min": -60.62158966064453,
-          "max": 53.77014923095703,
-          "frac_outside_1": 0.9091261625289917,
-          "frac_outside_3": 0.6792709231376648
+          "mean": 3.216646432876587,
+          "std": 3.803985357284546,
+          "skewness": -0.8623376743731161,
+          "min": -60.6215934753418,
+          "max": 53.770164489746094,
+          "frac_outside_1": 0.9090691208839417,
+          "frac_outside_3": 0.6793165802955627
         }
       },
       "latent_alpha_2.0": {
-        "edge_blending": 0.552556037902832,
-        "background_smoothness": 0.8949835896492004,
-        "object_preservation": 0.6241653361337783,
-        "stylization_strength": 1.9564199447631836,
+        "edge_blending": 0.544749915599823,
+        "background_smoothness": 0.8948643803596497,
+        "object_preservation": 0.6227374895212353,
+        "stylization_strength": 1.9644585847854614,
         "latent_stats": {
-          "mean": 3.262354612350464,
-          "std": 4.1816558837890625,
-          "skewness": -0.9523964916871271,
-          "min": -72.81610107421875,
-          "max": 63.443241119384766,
-          "frac_outside_1": 0.9143421053886414,
-          "frac_outside_3": 0.6933550834655762
+          "mean": 3.2610816955566406,
+          "std": 4.186418056488037,
+          "skewness": -0.946857018178824,
+          "min": -72.81610870361328,
+          "max": 63.443260192871094,
+          "frac_outside_1": 0.9143192768096924,
+          "frac_outside_3": 0.693571925163269
         }
       },
       "pixel_alpha_1.5": {
-        "edge_blending": 0.4938274621963501,
-        "background_smoothness": 0.919063150882721,
-        "object_preservation": 0.6826945783754267,
-        "stylization_strength": 0.7279213666915894
+        "edge_blending": 0.4926227331161499,
+        "background_smoothness": 0.9187778234481812,
+        "object_preservation": 0.6827218580436042,
+        "stylization_strength": 0.7311149835586548
       },
       "pixel_alpha_2.0": {
-        "edge_blending": 0.4816681146621704,
-        "background_smoothness": 0.9172215461730957,
-        "object_preservation": 0.6806523749193211,
-        "stylization_strength": 0.631215512752533
+        "edge_blending": 0.48610398173332214,
+        "background_smoothness": 0.9169193506240845,
+        "object_preservation": 0.6806936029003872,
+        "stylization_strength": 0.6325074434280396
       },
       "filter_unsharp": {
         "edge_blending": 0.13757027685642242,
@@ -758,14 +758,14 @@
       "filter_bilateral": {
         "edge_blending": 0.40177223086357117,
         "background_smoothness": 0.9156970381736755,
-        "object_preservation": 0.9329551479245013,
+        "object_preservation": 0.9329550482343902,
         "stylization_strength": 0.3781740665435791
       },
       "filter_clahe": {
-        "edge_blending": 0.0815415307879448,
-        "background_smoothness": 0.8127566576004028,
-        "object_preservation": 0.8921971873733964,
-        "stylization_strength": 1.7429817914962769
+        "edge_blending": 0.08154154568910599,
+        "background_smoothness": 0.812756359577179,
+        "object_preservation": 0.8921971314366431,
+        "stylization_strength": 1.7429776191711426
       }
     }
   },
@@ -773,91 +773,91 @@
     "image": "dog2.png",
     "ablations": {
       "latent_alpha_0.0": {
-        "edge_blending": 0.8177161812782288,
-        "background_smoothness": 0.7582204937934875,
-        "object_preservation": 0.3329986600010334,
-        "stylization_strength": 0.3036835491657257,
+        "edge_blending": 0.8176971077919006,
+        "background_smoothness": 0.7581908106803894,
+        "object_preservation": 0.33295065933462076,
+        "stylization_strength": 0.30361998081207275,
         "latent_stats": {
-          "mean": 0.012099321000277996,
-          "std": 3.1179730892181396,
-          "skewness": -0.11821689850502365,
-          "min": -10.643206596374512,
-          "max": 15.379311561584473,
-          "frac_outside_1": 0.7510850429534912,
-          "frac_outside_3": 0.32154223322868347
+          "mean": 0.011953037232160568,
+          "std": 3.118098735809326,
+          "skewness": -0.11809357483771003,
+          "min": -10.64513111114502,
+          "max": 15.379537582397461,
+          "frac_outside_1": 0.7503616809844971,
+          "frac_outside_3": 0.32125288248062134
         }
       },
       "latent_alpha_0.5": {
-        "edge_blending": 0.7683245539665222,
-        "background_smoothness": 0.7535537481307983,
-        "object_preservation": 0.33712794161152093,
-        "stylization_strength": 0.35515931248664856,
+        "edge_blending": 0.7677856683731079,
+        "background_smoothness": 0.7531245946884155,
+        "object_preservation": 0.337101350900747,
+        "stylization_strength": 0.35665351152420044,
         "latent_stats": {
-          "mean": 0.04600249230861664,
-          "std": 3.120349407196045,
-          "skewness": -0.10191085032235425,
-          "min": -12.624836921691895,
-          "max": 16.56473159790039,
-          "frac_outside_1": 0.7566550970077515,
-          "frac_outside_3": 0.3272569477558136
+          "mean": 0.04663724824786186,
+          "std": 3.121964454650879,
+          "skewness": -0.10161205692087141,
+          "min": -12.625873565673828,
+          "max": 16.564542770385742,
+          "frac_outside_1": 0.755859375,
+          "frac_outside_3": 0.32740160822868347
         }
       },
       "latent_alpha_1.0": {
-        "edge_blending": 0.6920690536499023,
-        "background_smoothness": 0.7684159874916077,
-        "object_preservation": 0.32792850640863236,
-        "stylization_strength": 0.46234139800071716,
+        "edge_blending": 0.6888340711593628,
+        "background_smoothness": 0.7679500579833984,
+        "object_preservation": 0.32765792226855683,
+        "stylization_strength": 0.46428725123405457,
         "latent_stats": {
-          "mean": 0.07952714711427689,
-          "std": 3.247174024581909,
-          "skewness": 0.03632250613580552,
+          "mean": 0.0810183584690094,
+          "std": 3.252311944961548,
+          "skewness": 0.03860124225512955,
           "min": -19.386594772338867,
-          "max": 25.410249710083008,
-          "frac_outside_1": 0.7569444179534912,
-          "frac_outside_3": 0.3326822817325592
+          "max": 25.41023063659668,
+          "frac_outside_1": 0.7570891380310059,
+          "frac_outside_3": 0.33275464177131653
         }
       },
       "latent_alpha_1.5": {
-        "edge_blending": 0.640006959438324,
-        "background_smoothness": 0.7728026509284973,
-        "object_preservation": 0.31111733617213094,
-        "stylization_strength": 0.606479823589325,
+        "edge_blending": 0.632474422454834,
+        "background_smoothness": 0.7719340324401855,
+        "object_preservation": 0.31068232814288,
+        "stylization_strength": 0.6099117994308472,
         "latent_stats": {
-          "mean": 0.11344365030527115,
-          "std": 3.4852194786071777,
-          "skewness": 0.25174854849408823,
-          "min": -26.148195266723633,
-          "max": 34.25663375854492,
-          "frac_outside_1": 0.7583912014961243,
-          "frac_outside_3": 0.3387586772441864
+          "mean": 0.11570790410041809,
+          "std": 3.495530843734741,
+          "skewness": 0.25576034293715977,
+          "min": -26.147850036621094,
+          "max": 34.255802154541016,
+          "frac_outside_1": 0.7586082220077515,
+          "frac_outside_3": 0.33933737874031067
         }
       },
       "latent_alpha_2.0": {
-        "edge_blending": 0.5949564576148987,
-        "background_smoothness": 0.7756363153457642,
-        "object_preservation": 0.2944180688133898,
-        "stylization_strength": 0.7185729742050171,
+        "edge_blending": 0.5882402658462524,
+        "background_smoothness": 0.7753117084503174,
+        "object_preservation": 0.2938108973964819,
+        "stylization_strength": 0.7248561978340149,
         "latent_stats": {
-          "mean": 0.14711645245552063,
-          "std": 3.8134171962738037,
-          "skewness": 0.47587934776015767,
-          "min": -32.90849685668945,
-          "max": 43.102394104003906,
-          "frac_outside_1": 0.7600550055503845,
-          "frac_outside_3": 0.34338831901550293
+          "mean": 0.1501956582069397,
+          "std": 3.829723358154297,
+          "skewness": 0.4801437968111137,
+          "min": -32.90780258178711,
+          "max": 43.101234436035156,
+          "frac_outside_1": 0.7605613470077515,
+          "frac_outside_3": 0.34403935074806213
         }
       },
       "pixel_alpha_1.5": {
-        "edge_blending": 0.39088964462280273,
-        "background_smoothness": 0.8763003349304199,
-        "object_preservation": 0.2830191947942371,
-        "stylization_strength": 0.3625727593898773
+        "edge_blending": 0.38881275057792664,
+        "background_smoothness": 0.8756749033927917,
+        "object_preservation": 0.28309740913697723,
+        "stylization_strength": 0.3652324676513672
       },
       "pixel_alpha_2.0": {
-        "edge_blending": 0.3965361714363098,
-        "background_smoothness": 0.8765056133270264,
-        "object_preservation": 0.2843576597226795,
-        "stylization_strength": 0.32476139068603516
+        "edge_blending": 0.39691662788391113,
+        "background_smoothness": 0.8760191202163696,
+        "object_preservation": 0.2844483924869045,
+        "stylization_strength": 0.3244932293891907
       },
       "filter_unsharp": {
         "edge_blending": 0.03163645416498184,
@@ -872,10 +872,10 @@
         "stylization_strength": 0.5098205804824829
       },
       "filter_clahe": {
-        "edge_blending": 0.019797762855887413,
-        "background_smoothness": 0.36035218834877014,
-        "object_preservation": 0.7979991956933337,
-        "stylization_strength": 1.6791977882385254
+        "edge_blending": 0.01979767344892025,
+        "background_smoothness": 0.3603564500808716,
+        "object_preservation": 0.7979991629006722,
+        "stylization_strength": 1.6792140007019043
       }
     }
   },
@@ -883,91 +883,91 @@
     "image": "horse1.png",
     "ablations": {
       "latent_alpha_0.0": {
-        "edge_blending": 0.7338200807571411,
-        "background_smoothness": 0.4528889060020447,
-        "object_preservation": 0.19258740104553232,
-        "stylization_strength": 0.2905416786670685,
+        "edge_blending": 0.7338320016860962,
+        "background_smoothness": 0.45288893580436707,
+        "object_preservation": 0.19259892132144218,
+        "stylization_strength": 0.2905549705028534,
         "latent_stats": {
-          "mean": -0.9609084725379944,
-          "std": 2.845428228378296,
-          "skewness": -0.32080917311444207,
-          "min": -16.5325870513916,
-          "max": 10.411842346191406,
-          "frac_outside_1": 0.70361328125,
+          "mean": -0.9609476923942566,
+          "std": 2.8454084396362305,
+          "skewness": -0.3207586561735152,
+          "min": -16.532499313354492,
+          "max": 10.412879943847656,
+          "frac_outside_1": 0.7035590410232544,
           "frac_outside_3": 0.2906358540058136
         }
       },
       "latent_alpha_0.5": {
-        "edge_blending": 0.7049154043197632,
-        "background_smoothness": 0.45792388916015625,
-        "object_preservation": 0.20378575016382552,
-        "stylization_strength": 0.35644346475601196,
+        "edge_blending": 0.7043707966804504,
+        "background_smoothness": 0.4595302939414978,
+        "object_preservation": 0.20380855733551412,
+        "stylization_strength": 0.3562750518321991,
         "latent_stats": {
-          "mean": -0.9689839482307434,
-          "std": 2.837740182876587,
-          "skewness": -0.31426776645099247,
-          "min": -16.53252601623535,
-          "max": 11.990812301635742,
+          "mean": -0.9680633544921875,
+          "std": 2.8374953269958496,
+          "skewness": -0.31508597592867493,
+          "min": -16.53240394592285,
+          "max": 11.676973342895508,
           "frac_outside_1": 0.7022569179534912,
-          "frac_outside_3": 0.2900661826133728
+          "frac_outside_3": 0.2901746928691864
         }
       },
       "latent_alpha_1.0": {
-        "edge_blending": 0.6156213283538818,
-        "background_smoothness": 0.4535641074180603,
-        "object_preservation": 0.21950337269277503,
-        "stylization_strength": 0.5029793381690979,
+        "edge_blending": 0.6154965758323669,
+        "background_smoothness": 0.45418018102645874,
+        "object_preservation": 0.21954167716768946,
+        "stylization_strength": 0.5028032064437866,
         "latent_stats": {
-          "mean": -0.9770059585571289,
-          "std": 2.895672559738159,
-          "skewness": -0.2435785627844903,
-          "min": -16.53232192993164,
-          "max": 17.352031707763672,
-          "frac_outside_1": 0.7038031816482544,
-          "frac_outside_3": 0.2974989116191864
+          "mean": -0.9751904606819153,
+          "std": 2.895416021347046,
+          "skewness": -0.2452812765394847,
+          "min": -16.53242301940918,
+          "max": 17.35199737548828,
+          "frac_outside_1": 0.7040202021598816,
+          "frac_outside_3": 0.2974175214767456
         }
       },
       "latent_alpha_1.5": {
-        "edge_blending": 0.42485618591308594,
-        "background_smoothness": 0.48147594928741455,
-        "object_preservation": 0.21761265913689132,
-        "stylization_strength": 0.7986266016960144,
+        "edge_blending": 0.41660115122795105,
+        "background_smoothness": 0.48301321268081665,
+        "object_preservation": 0.21780924457903555,
+        "stylization_strength": 0.8040779829025269,
         "latent_stats": {
-          "mean": -0.985047459602356,
-          "std": 3.0155811309814453,
-          "skewness": -0.13893972334666493,
-          "min": -16.532663345336914,
-          "max": 25.801193237304688,
-          "frac_outside_1": 0.7074652910232544,
+          "mean": -0.9822949171066284,
+          "std": 3.0153861045837402,
+          "skewness": -0.13895289214632167,
+          "min": -16.532550811767578,
+          "max": 25.802001953125,
+          "frac_outside_1": 0.7072211503982544,
           "frac_outside_3": 0.3044162392616272
         }
       },
       "latent_alpha_2.0": {
-        "edge_blending": 0.31414029002189636,
-        "background_smoothness": 0.540139377117157,
-        "object_preservation": 0.2060462415947601,
-        "stylization_strength": 0.957066535949707,
+        "edge_blending": 0.3101590573787689,
+        "background_smoothness": 0.5419576168060303,
+        "object_preservation": 0.2063791050525923,
+        "stylization_strength": 0.9703587889671326,
         "latent_stats": {
-          "mean": -0.993026077747345,
-          "std": 3.1903738975524902,
-          "skewness": -0.033257120283434645,
-          "min": -21.012386322021484,
-          "max": 34.25100326538086,
-          "frac_outside_1": 0.7095540165901184,
-          "frac_outside_3": 0.310302734375
+          "mean": -0.98940110206604,
+          "std": 3.1904194355010986,
+          "skewness": -0.028401390446315997,
+          "min": -21.012853622436523,
+          "max": 34.25466537475586,
+          "frac_outside_1": 0.7093369960784912,
+          "frac_outside_3": 0.3101942241191864
         }
       },
       "pixel_alpha_1.5": {
-        "edge_blending": 0.1145462691783905,
-        "background_smoothness": 0.8600404262542725,
-        "object_preservation": 0.382428957486737,
-        "stylization_strength": 0.6820626854896545
+        "edge_blending": 0.11142952740192413,
+        "background_smoothness": 0.8604526519775391,
+        "object_preservation": 0.38175648198384343,
+        "stylization_strength": 0.6740825772285461
       },
       "pixel_alpha_2.0": {
-        "edge_blending": 0.10526727885007858,
-        "background_smoothness": 0.8565866947174072,
-        "object_preservation": 0.34668099637558025,
-        "stylization_strength": 0.6844865083694458
+        "edge_blending": 0.10223562270402908,
+        "background_smoothness": 0.8560504913330078,
+        "object_preservation": 0.3460417840916088,
+        "stylization_strength": 0.6754601001739502
       },
       "filter_unsharp": {
         "edge_blending": 0.003796869423240423,
@@ -977,15 +977,15 @@
       },
       "filter_bilateral": {
         "edge_blending": 0.03427750617265701,
-        "background_smoothness": 0.17250043153762817,
-        "object_preservation": 0.9012482476045195,
-        "stylization_strength": 0.6352314949035645
+        "background_smoothness": 0.17250055074691772,
+        "object_preservation": 0.9012474711925555,
+        "stylization_strength": 0.6352306008338928
       },
       "filter_clahe": {
-        "edge_blending": 0.005276873707771301,
-        "background_smoothness": 0.04100567474961281,
-        "object_preservation": 0.9053542270027931,
-        "stylization_strength": 1.3541615009307861
+        "edge_blending": 0.0052768937312066555,
+        "background_smoothness": 0.041005730628967285,
+        "object_preservation": 0.9053544445691079,
+        "stylization_strength": 1.3541460037231445
       }
     }
   },
@@ -993,109 +993,109 @@
     "image": "horse2.png",
     "ablations": {
       "latent_alpha_0.0": {
-        "edge_blending": 0.799466073513031,
-        "background_smoothness": 0.8366544246673584,
-        "object_preservation": 0.5038442188298703,
-        "stylization_strength": 0.23791344463825226,
+        "edge_blending": 0.7994717359542847,
+        "background_smoothness": 0.8366542458534241,
+        "object_preservation": 0.5038345582113387,
+        "stylization_strength": 0.23794175684452057,
         "latent_stats": {
-          "mean": 0.6000241041183472,
-          "std": 3.147681951522827,
-          "skewness": 0.0004156455068462053,
-          "min": -19.436338424682617,
-          "max": 15.397847175598145,
-          "frac_outside_1": 0.7729027271270752,
-          "frac_outside_3": 0.3488653302192688
+          "mean": 0.6000139713287354,
+          "std": 3.147597074508667,
+          "skewness": 0.0003726199931096643,
+          "min": -19.436017990112305,
+          "max": 15.397795677185059,
+          "frac_outside_1": 0.77294921875,
+          "frac_outside_3": 0.348935067653656
         }
       },
       "latent_alpha_0.5": {
-        "edge_blending": 0.7784475684165955,
-        "background_smoothness": 0.831333577632904,
-        "object_preservation": 0.5057496407616924,
-        "stylization_strength": 0.26121535897254944,
+        "edge_blending": 0.7781903743743896,
+        "background_smoothness": 0.8313271999359131,
+        "object_preservation": 0.5057141575257985,
+        "stylization_strength": 0.261559396982193,
         "latent_stats": {
-          "mean": 0.5904961824417114,
-          "std": 3.153489589691162,
-          "skewness": -0.020774061461583986,
-          "min": -19.436614990234375,
-          "max": 15.397867202758789,
-          "frac_outside_1": 0.7732747197151184,
-          "frac_outside_3": 0.3493768572807312
+          "mean": 0.5902264714241028,
+          "std": 3.1534955501556396,
+          "skewness": -0.020414069727395213,
+          "min": -19.436304092407227,
+          "max": 15.397797584533691,
+          "frac_outside_1": 0.773251473903656,
+          "frac_outside_3": 0.3494931161403656
         }
       },
       "latent_alpha_1.0": {
-        "edge_blending": 0.7263925075531006,
-        "background_smoothness": 0.8268991112709045,
-        "object_preservation": 0.4983873501222726,
-        "stylization_strength": 0.3188247084617615,
+        "edge_blending": 0.7246043086051941,
+        "background_smoothness": 0.8268425464630127,
+        "object_preservation": 0.49845619650355666,
+        "stylization_strength": 0.31950801610946655,
         "latent_stats": {
-          "mean": 0.580917239189148,
-          "std": 3.250735282897949,
-          "skewness": -0.10107256247222327,
-          "min": -19.436328887939453,
-          "max": 15.397789001464844,
-          "frac_outside_1": 0.7823893427848816,
-          "frac_outside_3": 0.3616769015789032
+          "mean": 0.5804535746574402,
+          "std": 3.2507426738739014,
+          "skewness": -0.10076258939833825,
+          "min": -19.43621253967285,
+          "max": 15.397963523864746,
+          "frac_outside_1": 0.7822962999343872,
+          "frac_outside_3": 0.3619559109210968
         }
       },
       "latent_alpha_1.5": {
-        "edge_blending": 0.6490526795387268,
-        "background_smoothness": 0.8211566209793091,
-        "object_preservation": 0.4750647655443115,
-        "stylization_strength": 0.45090311765670776,
+        "edge_blending": 0.6468490958213806,
+        "background_smoothness": 0.8214471340179443,
+        "object_preservation": 0.4751781748708896,
+        "stylization_strength": 0.4513419270515442,
         "latent_stats": {
-          "mean": 0.5713685750961304,
-          "std": 3.431593179702759,
-          "skewness": -0.2437457216961923,
-          "min": -22.94923973083496,
-          "max": 18.095767974853516,
-          "frac_outside_1": 0.7887369990348816,
-          "frac_outside_3": 0.375186026096344
+          "mean": 0.5706755518913269,
+          "std": 3.4316539764404297,
+          "skewness": -0.24462343228357636,
+          "min": -22.949411392211914,
+          "max": 18.095659255981445,
+          "frac_outside_1": 0.7891554832458496,
+          "frac_outside_3": 0.3755347728729248
         }
       },
       "latent_alpha_2.0": {
-        "edge_blending": 0.5991671681404114,
-        "background_smoothness": 0.8175956606864929,
-        "object_preservation": 0.45043614794037135,
-        "stylization_strength": 0.5957456827163696,
+        "edge_blending": 0.597419023513794,
+        "background_smoothness": 0.8179078102111816,
+        "object_preservation": 0.4504540350264969,
+        "stylization_strength": 0.5974953770637512,
         "latent_stats": {
-          "mean": 0.5617800951004028,
-          "std": 3.6836674213409424,
-          "skewness": -0.4237915944118484,
-          "min": -31.377700805664062,
-          "max": 24.54235076904297,
-          "frac_outside_1": 0.7937825322151184,
-          "frac_outside_3": 0.3856956958770752
+          "mean": 0.5608469843864441,
+          "std": 3.6839547157287598,
+          "skewness": -0.426784916827928,
+          "min": -31.377796173095703,
+          "max": 24.542558670043945,
+          "frac_outside_1": 0.7940382957458496,
+          "frac_outside_3": 0.3858816921710968
         }
       },
       "pixel_alpha_1.5": {
-        "edge_blending": 0.28395310044288635,
-        "background_smoothness": 0.8828100562095642,
-        "object_preservation": 0.5292513001220686,
-        "stylization_strength": 0.3038419187068939
+        "edge_blending": 0.2807168662548065,
+        "background_smoothness": 0.8827019929885864,
+        "object_preservation": 0.528879625461987,
+        "stylization_strength": 0.30767694115638733
       },
       "pixel_alpha_2.0": {
-        "edge_blending": 0.27568623423576355,
-        "background_smoothness": 0.881580114364624,
-        "object_preservation": 0.5112683101356745,
-        "stylization_strength": 0.3567103445529938
+        "edge_blending": 0.2709861397743225,
+        "background_smoothness": 0.8813650608062744,
+        "object_preservation": 0.5109516000948064,
+        "stylization_strength": 0.36206406354904175
       },
       "filter_unsharp": {
         "edge_blending": 0.017545944079756737,
-        "background_smoothness": 0.46080195903778076,
+        "background_smoothness": 0.4608019292354584,
         "object_preservation": 0.957701749870487,
         "stylization_strength": 1.4876545667648315
       },
       "filter_bilateral": {
-        "edge_blending": 0.10293024033308029,
+        "edge_blending": 0.1029302328824997,
         "background_smoothness": 0.7454655766487122,
         "object_preservation": 0.8911345606424174,
         "stylization_strength": 0.6582133173942566
       },
       "filter_clahe": {
-        "edge_blending": 0.022331375628709793,
-        "background_smoothness": 0.388976126909256,
-        "object_preservation": 0.8565069796337672,
-        "stylization_strength": 1.5077824592590332
+        "edge_blending": 0.02233152464032173,
+        "background_smoothness": 0.3889756500720978,
+        "object_preservation": 0.8565071509670094,
+        "stylization_strength": 1.507783055305481
       }
     }
   },
@@ -1103,95 +1103,95 @@
     "image": "horse3.png",
     "ablations": {
       "latent_alpha_0.0": {
-        "edge_blending": 0.8235770463943481,
-        "background_smoothness": 0.7001720666885376,
-        "object_preservation": 0.33739742056584787,
-        "stylization_strength": 0.30394554138183594,
+        "edge_blending": 0.8235729932785034,
+        "background_smoothness": 0.7002007961273193,
+        "object_preservation": 0.3373772978158064,
+        "stylization_strength": 0.3040075898170471,
         "latent_stats": {
-          "mean": -0.11639006435871124,
-          "std": 2.8233256340026855,
-          "skewness": -0.0862914960142676,
-          "min": -15.06008243560791,
-          "max": 12.952327728271484,
-          "frac_outside_1": 0.7218017578125,
-          "frac_outside_3": 0.29241943359375
+          "mean": -0.11638963967561722,
+          "std": 2.8233683109283447,
+          "skewness": -0.08627874808975333,
+          "min": -15.059815406799316,
+          "max": 12.95240592956543,
+          "frac_outside_1": 0.72186279296875,
+          "frac_outside_3": 0.292388916015625
         }
       },
       "latent_alpha_0.5": {
-        "edge_blending": 0.8183739185333252,
-        "background_smoothness": 0.6939793229103088,
-        "object_preservation": 0.33976670868130204,
-        "stylization_strength": 0.32932886481285095,
+        "edge_blending": 0.8254469037055969,
+        "background_smoothness": 0.6951298713684082,
+        "object_preservation": 0.3388885902399921,
+        "stylization_strength": 0.3257969915866852,
         "latent_stats": {
-          "mean": -0.1280478835105896,
-          "std": 2.7763571739196777,
-          "skewness": -0.11027873229760797,
-          "min": -11.227863311767578,
-          "max": 13.522807121276855,
-          "frac_outside_1": 0.72088623046875,
-          "frac_outside_3": 0.28863525390625
+          "mean": -0.1278078258037567,
+          "std": 2.777523994445801,
+          "skewness": -0.11034951348950343,
+          "min": -11.227417945861816,
+          "max": 13.522838592529297,
+          "frac_outside_1": 0.720794677734375,
+          "frac_outside_3": 0.2890625
         }
       },
       "latent_alpha_1.0": {
-        "edge_blending": 0.7343094944953918,
-        "background_smoothness": 0.694848895072937,
-        "object_preservation": 0.34310027967423706,
-        "stylization_strength": 0.4842090904712677,
+        "edge_blending": 0.7730382084846497,
+        "background_smoothness": 0.6982136368751526,
+        "object_preservation": 0.34132004284162143,
+        "stylization_strength": 0.46421751379966736,
         "latent_stats": {
-          "mean": -0.13971033692359924,
-          "std": 2.8504486083984375,
-          "skewness": -0.08276180387189279,
-          "min": -13.730574607849121,
-          "max": 17.300762176513672,
-          "frac_outside_1": 0.725128173828125,
-          "frac_outside_3": 0.2984619140625
+          "mean": -0.1391870081424713,
+          "std": 2.839503765106201,
+          "skewness": -0.08608379201425248,
+          "min": -13.730549812316895,
+          "max": 17.300758361816406,
+          "frac_outside_1": 0.724395751953125,
+          "frac_outside_3": 0.29632568359375
         }
       },
       "latent_alpha_1.5": {
-        "edge_blending": 0.5946213603019714,
-        "background_smoothness": 0.7126170992851257,
-        "object_preservation": 0.3374647882841677,
-        "stylization_strength": 0.8023926615715027,
+        "edge_blending": 0.676233172416687,
+        "background_smoothness": 0.7215554118156433,
+        "object_preservation": 0.33692817358843924,
+        "stylization_strength": 0.7681006193161011,
         "latent_stats": {
-          "mean": -0.15131914615631104,
-          "std": 3.0366592407226562,
-          "skewness": -0.026824923856405457,
-          "min": -21.10047721862793,
-          "max": 23.66160011291504,
-          "frac_outside_1": 0.73004150390625,
-          "frac_outside_3": 0.31036376953125
+          "mean": -0.15049216151237488,
+          "std": 3.002875328063965,
+          "skewness": -0.03290425357680248,
+          "min": -21.100160598754883,
+          "max": 23.66203498840332,
+          "frac_outside_1": 0.7283935546875,
+          "frac_outside_3": 0.306610107421875
         }
       },
       "latent_alpha_2.0": {
-        "edge_blending": 0.507594108581543,
-        "background_smoothness": 0.7248438000679016,
-        "object_preservation": 0.33350650735668624,
-        "stylization_strength": 0.8174066543579102,
+        "edge_blending": 0.61762934923172,
+        "background_smoothness": 0.7350773215293884,
+        "object_preservation": 0.3336059328081254,
+        "stylization_strength": 0.7869402170181274,
         "latent_stats": {
-          "mean": -0.1629021316766739,
-          "std": 3.3162624835968018,
-          "skewness": 0.027542075471539793,
-          "min": -28.470041275024414,
-          "max": 32.09572219848633,
-          "frac_outside_1": 0.732757568359375,
-          "frac_outside_3": 0.31756591796875
+          "mean": -0.16198445856571198,
+          "std": 3.2522048950195312,
+          "skewness": 0.021826565477797016,
+          "min": -28.470197677612305,
+          "max": 32.095638275146484,
+          "frac_outside_1": 0.730712890625,
+          "frac_outside_3": 0.3134765625
         }
       },
       "pixel_alpha_1.5": {
-        "edge_blending": 0.2616577446460724,
-        "background_smoothness": 0.8895448446273804,
-        "object_preservation": 0.48914482266417225,
-        "stylization_strength": 0.44039463996887207
+        "edge_blending": 0.31251102685928345,
+        "background_smoothness": 0.9008541107177734,
+        "object_preservation": 0.4792409777638943,
+        "stylization_strength": 0.4064752161502838
       },
       "pixel_alpha_2.0": {
-        "edge_blending": 0.25951632857322693,
-        "background_smoothness": 0.8888619542121887,
-        "object_preservation": 0.4555584148029818,
-        "stylization_strength": 0.3545772433280945
+        "edge_blending": 0.31312116980552673,
+        "background_smoothness": 0.8990767002105713,
+        "object_preservation": 0.44950497850599724,
+        "stylization_strength": 0.318644255399704
       },
       "filter_unsharp": {
         "edge_blending": 0.04156852141022682,
-        "background_smoothness": 0.47016966342926025,
+        "background_smoothness": 0.47016963362693787,
         "object_preservation": 0.9522127829369971,
         "stylization_strength": 1.481414556503296
       },
@@ -1202,8 +1202,8 @@
         "stylization_strength": 0.5479298233985901
       },
       "filter_clahe": {
-        "edge_blending": 0.024036021903157234,
-        "background_smoothness": 0.3541848063468933,
+        "edge_blending": 0.024036023765802383,
+        "background_smoothness": 0.3541847765445709,
         "object_preservation": 0.8172105277934746,
         "stylization_strength": 1.73891019821167
       }
