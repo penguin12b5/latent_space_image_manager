@@ -35,7 +35,7 @@ The core pipeline is implemented via two primary classes and a set of free funct
 **`ImageProcessor` class** encapsulates model loading and inference:
 - **Object detection**: Faster R-CNN with ResNet-50-FPN backbone (torchvision pretrained weights), confidence threshold $\tau = 0.8$.
 - **VAE**: Stable Diffusion v1.4 AutoencoderKL loaded from local `./models` directory via the `diffusers` library. Provides `encode()` and `decode()` methods that map between pixel space $\mathbb{R}^{H \times W \times 3}$ and latent space $\mathbb{R}^{4 \times h \times w}$ where $(h, w) = (H/8, W/8)$.
-- **Device selection**: Automatic CUDA/CPU selection at initialization.
+- **Device selection**: Automatic CUDA/MPS/CPU selection at initialization (supports Apple Silicon via MPS backend).
 
 **`ImageDisplayer` class** provides matplotlib-based visualization for side-by-side comparison of original and reconstructed images.
 
@@ -72,17 +72,25 @@ Implements latent-space blending via the `mask_type` parameter:
 
 Key implementation detail: coordinate mapping uses integer division by 8 (`y1 // 8`, `x1 // 8`) to convert pixel-space bounding box positions to latent-space positions.
 
-### 2.3 Subject Tiling
+### 2.3 Stylized Subject Selection
+
+When `saturate_factor != 1.0` (stylization experiments), `process_image_lol()` applies single-subject selection logic:
+- For `cat3.png`: selects the 2nd detected object (to isolate the cat rather than a background detection).
+- For all other images: selects only the 1st (highest-confidence) detected object.
+
+This ensures the stylization effect is applied to a single primary subject rather than all detections.
+
+### 2.4 Subject Tiling
 
 The `find_subjects()` method handles large objects that exceed configurable `max_width` / `max_height` thresholds (default 1000 pixels) by splitting them into tiles. This ensures stable VAE encoding regardless of object size.
 
-### 2.4 Command-Line Interface
+### 2.5 Command-Line Interface
 
 ```bash
 python process_image.py <method> <image_path> <output_name>
 ```
 
-Where `<method>` is one of: `dod`, `sam`, `lol_fade`, `lol_sam`.
+Where `<method>` is one of: `dod_fade`, `dod_sam`, `lol_fade`, `lol_sam`.
 
 ---
 
@@ -116,6 +124,11 @@ Rather than using the method's own mask, this script generates an independent re
 
 The script evaluates all four methods across the 11 benchmark images (`car1-3`, `cat1-3`, `dog1-2`, `horse1-3`), prints per-image scores, and identifies the winner for each image.
 
+### 3.4 Outputs
+
+- `results/evaluate_image_blending_result.json`: Per-image scores (edge blending, background smoothness, object preservation, Q_img composite) for each method, plus per-image winners. This is the primary source for Table 5 (per-image Q_img) in the paper.
+- `results/metrics.json` (merged): Adds `boundary_energy`, `background_laplacian`, and `object_ssim` aggregates so that downstream scripts (notably `eval_metrics.py`) can compute $Q_{\text{agg}}$ with real boundary values.
+
 ---
 
 ## 4. Aggregate Metrics: `eval_metrics.py`
@@ -134,9 +147,22 @@ Preferentially uses the `lpips` package with VGG backbone when available. Falls 
 
 ### 4.3 Outputs
 
-- `results/metrics.json`: All metric values in JSON format.
-- `results/per_image_metrics.csv`: Per-image LPIPS values.
+- `results/metrics.json` (merged): Adds `fid`, `lpips`, `composite` ($Q_{\text{agg}}$), and `per_image_lpips` fields. Preserves existing fields (e.g., `boundary_energy` from `evaluate_image_blending.py`, `iou` from `compute_iou_direct.py`).
+- `results/per_image_metrics.csv`: Per-image LPIPS values in flat CSV format (one row per image×method pair).
 - `results/quant_table.tex`: LaTeX snippet for direct inclusion in the paper.
+
+### 4.4 Distinction Between Per-Image Output Files
+
+Two files contain per-image results but they measure different things and come from different scripts:
+
+| | `evaluate_image_blending_result.json` | `per_image_metrics.csv` |
+|--|---------------------------------------|------------------------|
+| **Produced by** | `evaluate_image_blending.py` | `eval_metrics.py` |
+| **Metrics** | Edge blending, background smoothness, object preservation, $Q_{\text{img}}$ | LPIPS only |
+| **Purpose** | Artistic composite quality (which method wins each image) | Pixel-level perceptual fidelity vs. original |
+| **Format** | JSON with nested scores per method per image | Flat CSV (image, method, lpips) |
+
+These files are complementary with no overlap: one captures the three-component composite quality used to determine per-image winners (Table 5 in the paper), the other captures perceptual distance used in the aggregate comparison (Table 3).
 
 ---
 
@@ -265,51 +291,72 @@ Model files are tracked via Git LFS. Run `git lfs pull` after cloning.
 
 | Variable | Default | Purpose |
 |----------|---------|---------|
-| `SAM_CHECKPOINT` | `models/sam_vit_h_4b8939.pth` | Path to SAM model weights |
+| `SAM_CHECKPOINT` | `models/sam_vit_b_01ec64.pth` | Path to SAM model weights (ViT-B included in repo; set to `models/sam_vit_h_4b8939.pth` for ViT-H if downloaded separately) |
 
 ---
 
 ## 10. Reproduction Instructions
 
+### 10.0 Default Parameters
+
+Unless noted otherwise, all reconstruction comparisons in the paper use:
+
+- **`--scale 0.25`** — background downscaling factor (the VAE encodes a 4× downscaled image, then the latent is upscaled back to full resolution).
+- **`--saturate_factor 1.0`** — no mask-alpha extrapolation (standard reconstruction). Values > 1.0 are used only in the stylization experiments (Section 8).
+
+Output images from these defaults are stored with the `_0.25` suffix, e.g. `images/output/dod_fade/car1_0.25.png`.
+
 ### 10.1 Generate Reconstruction Outputs (All 4 Methods)
 
 ```bash
-# DOD-FADE
-python process_image.py dod images/input/car1.png car1_dod_fade_result
+cd scripts/
 
-# DOD-SAM
-python process_image.py sam images/input/car1.png car1_dod_sam_result
-
-# LOL-FADE
-python process_image.py lol_fade images/input/car1.png car1_lol_fade_result
-
-# LOL-SAM
-python process_image.py lol_sam images/input/car1.png car1_lol_sam_result
+# Run all 4 methods for a single image (repeat for all 11 benchmark images)
+for method in dod_fade dod_sam lol_fade lol_sam; do
+    python process_image.py \
+        --method $method \
+        --input_img_path images/input/car1.png \
+        --output_img_path "$method/car1_0.25" \
+        --scale 0.25 \
+        --max_subjects 1
+done
 ```
 
-### 10.2 Run Per-Image Evaluation
+Outputs are saved to `images/output/<method>/<image>_0.25.png`.
+
+### 10.2 Run Evaluation Scripts
+
+**Important: scripts must be run in the order below.** `evaluate_image_blending.py` writes boundary energy, background smoothness, and object SSIM into `results/metrics.json`. `eval_metrics.py` reads those boundary values to compute the correct $Q_{\text{agg}}$ composite score. Running `eval_metrics.py` before `evaluate_image_blending.py` will produce $Q_{\text{agg}}$ values computed with a placeholder boundary term.
 
 ```bash
+cd scripts/
+
+# Step 1: Per-image composite quality (Q_img) and boundary energy
+#   - Reads originals from images/input/
+#   - Reads method outputs from images/output/<method>/*_0.25.png
+#   - Writes results to results/evaluate_image_blending_result.json
+#   - Merges boundary_energy, background_laplacian, object_ssim into results/metrics.json
 python evaluate_image_blending.py
-```
 
-Requires `images_eval/` directory with subdirectories: `input/`, `dod_fade/`, `dod_sam/`, `lol_fade/`, `lol_sam/`.
-
-### 10.3 Compute Aggregate Metrics
-
-```bash
+# Step 2: Aggregate metrics (FID, LPIPS) and composite Q_agg
+#   - Reads boundary_energy from results/metrics.json (populated by Step 1)
+#   - Computes FID (ResNet-50 features) and LPIPS (VGG backbone)
+#   - Computes Q_agg = 0.5*(1 - E_norm) + 0.3*(1 - FID_norm) + 0.2*(1 - LPIPS_norm)
+#   - Merges results into results/metrics.json
 python eval_metrics.py
+
+# Step 3: IoU between method masks and GrabCut reference
+#   - Merges IoU results into results/metrics.json
 python compute_iou_direct.py
-python augment_metrics_with_masks.py
 ```
 
-### 10.4 Weight Sensitivity Analysis
+### 10.3 Weight Sensitivity Analysis
 
 ```bash
 python evaluate_weight_sensitivity.py
 ```
 
-### 10.5 Stylization Ablation
+### 10.4 Stylization Ablation
 
 ```bash
 SAM_CHECKPOINT=models/sam_vit_h_4b8939.pth python generate_stylization_ablation.py
@@ -344,23 +391,24 @@ SAM_CHECKPOINT=models/sam_vit_h_4b8939.pth python generate_stylization_ablation.
 ## 12. Script Dependency Graph
 
 ```
-process_image.py  (standalone — core pipeline)
+process_image.py  (standalone — core pipeline, generates images/output/)
      |
      v
-evaluate_image_blending.py  (imports nothing from process_image)
-     |
+evaluate_image_blending.py  (reads images/output/*_0.25.png)
+     |                       (writes evaluate_image_blending_result.json)
+     |                       (merges boundary_energy into metrics.json)  ← MUST RUN FIRST
      v
+eval_metrics.py  (reads boundary_energy from metrics.json)
+     |            (computes FID/LPIPS, writes Q_agg with real boundary)
+     v
+compute_iou_direct.py  (standalone — merges IoU into metrics.json)
+
 evaluate_weight_sensitivity.py  (imports from evaluate_image_blending)
-
-eval_metrics.py  (standalone — FID/LPIPS)
-     |
-     v
-augment_metrics_with_masks.py  (reads metrics.json, augments it)
-
-compute_iou_direct.py  (standalone — reimplements detection + masking)
 
 generate_stylization_ablation.py  (reimplements pipeline classes to avoid import side effects)
 ```
+
+**Execution order matters:** `evaluate_image_blending.py` must run before `eval_metrics.py` so that boundary energy values are available for the $Q_{\text{agg}}$ computation. If `eval_metrics.py` runs first, it will use a placeholder boundary value of 0.5 and print a warning.
 
 ---
 
@@ -384,4 +432,4 @@ generate_stylization_ablation.py  (reimplements pipeline classes to avoid import
 
 ## 14. Summary
 
-This codebase implements a complete experimental framework for object-aware image reconstruction using latent diffusion models. The modular design separates reconstruction (generation) from evaluation (analysis), enabling independent verification of reported results. All quantitative claims in the paper — including per-image composite quality scores, aggregate metrics, weight sensitivity analysis, and stylization ablation results — can be reproduced by running the scripts in the order described in Section 10.
+This codebase implements a complete experimental framework for object-aware image reconstruction using latent diffusion models. The modular design separates reconstruction (generation) from evaluation (analysis), enabling independent verification of reported results. All reconstruction comparisons use `scale=0.25` and `saturate_factor=1.0` unless noted otherwise. All quantitative claims in the paper — including per-image composite quality scores, aggregate metrics, weight sensitivity analysis, and stylization ablation results — can be reproduced by running the scripts in the order described in Section 10: `evaluate_image_blending.py` must run before `eval_metrics.py` to ensure correct $Q_{\text{agg}}$ computation with real boundary energy values.
