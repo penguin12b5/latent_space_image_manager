@@ -16,7 +16,9 @@ _REPO = Path(__file__).resolve().parent.parent
 ROOT = _REPO / 'images'
 METHOD_FOLDERS = ['dod_fade','dod_sam','lol_fade','lol_sam','dod_fade','output']
 METHODS = ['DOD-FADE','DOD-SAM','LOL-FADE','LOL-SAM','DOD-FADE-dup','OUTPUT']
+OUTPUT_FOLDER = ROOT / 'output'
 INPUT_FOLDER = ROOT / 'input'
+SCALE_SUFFIX = '_0.25'
 OUT_DIR = _REPO / 'results'
 METRICS_OUT = OUT_DIR / 'metrics.json'
 PER_IMAGE_CSV = OUT_DIR / 'per_image_metrics.csv'
@@ -36,6 +38,11 @@ print('Using device:', device)
 def list_input_images():
     imgs = sorted([p.name for p in INPUT_FOLDER.iterdir() if p.suffix.lower() in ['.png','.jpg','.jpeg']])
     return imgs
+
+def method_image_path(method, img_name):
+    stem = Path(img_name).stem
+    suffix = Path(img_name).suffix
+    return OUTPUT_FOLDER / method / f'{stem}{SCALE_SUFFIX}{suffix}'
 
 # Feature extractor (ResNet50 avgpool features)
 class ResNetFeatureExtractor(torch.nn.Module):
@@ -157,7 +164,7 @@ if __name__ == '__main__':
     for img in images:
         ref = INPUT_FOLDER / img
         for m in methods:
-            cand = ROOT / m / img
+            cand = method_image_path(m, img)
             if cand.exists():
                 key = f'{m}:{img}'
                 lpips_pairs[key] = (str(ref), str(cand))
@@ -174,26 +181,26 @@ if __name__ == '__main__':
     agg_fid = {}
     orig_paths = [str(INPUT_FOLDER / img) for img in images]
     for m in methods:
-        paths = [str(ROOT / m / img) for img in images if (ROOT / m / img).exists()]
+        paths = [str(method_image_path(m, img)) for img in images if method_image_path(m, img).exists()]
         if len(paths)>0:
             fid = compute_fid(orig_paths, paths)
         else:
             fid = None
         agg_fid[m] = fid
 
-    # IoU and Boundary: attempt if masks exist
+    # IoU and Boundary: read from metrics.json if previously computed
     agg_iou = {}
     agg_boundary = {}
+    existing_metrics = {}
+    if METRICS_OUT.exists():
+        try:
+            existing_metrics = json.loads(METRICS_OUT.read_text())
+        except Exception:
+            existing_metrics = {}
     for m in methods:
-        agg_iou[m] = None
-        agg_boundary[m] = None
+        agg_iou[m] = existing_metrics.get('iou', {}).get(m, None)
+        agg_boundary[m] = existing_metrics.get('boundary_energy', {}).get(m, None)
 
-    # Compose composite Q where possible: need to normalize E (boundary), FID, LPIPS
-    # Build arrays for methods that have numeric values
-    methods_present = [m for m in methods]
-    # Prepare arrays for normalization using available metrics
-    # For simplicity, compute composite Q using available LPIPS and FID only
-    # normalize to [0,1] across methods with non-None
     def normalize_dict(d):
         vals = [v for v in d.values() if v is not None]
         if len(vals)==0:
@@ -207,24 +214,30 @@ if __name__ == '__main__':
         return out
     norm_fid = normalize_dict(agg_fid)
     norm_lpips = normalize_dict(agg_lpips)
+    norm_boundary = normalize_dict(agg_boundary)
 
     composite = {}
     for m in methods:
         if norm_fid.get(m) is None or norm_lpips.get(m) is None:
             composite[m] = None
         else:
-            E_norm = 0.5 # placeholder if boundary not available
+            E_norm = norm_boundary.get(m)
+            if E_norm is None:
+                E_norm = 0.5
+                print(f'Warning: no boundary energy for {m}, using placeholder E_norm=0.5')
             composite[m] = 0.5*(1 - E_norm) + 0.3*(1 - norm_fid[m]) + 0.2*(1 - norm_lpips[m])
 
-    # Save metrics
-    out = {
+    # Save metrics (merge into existing to preserve fields from other scripts)
+    out = existing_metrics.copy()
+    out.pop('boundary', None)
+    out.update({
         'fid': agg_fid,
         'lpips': agg_lpips,
         'iou': agg_iou,
-        'boundary': agg_boundary,
+        'boundary_energy': agg_boundary,
         'composite': composite,
-        'per_image_lpips': lpips_results
-    }
+        'per_image_lpips': lpips_results,
+    })
     METRICS_OUT.write_text(json.dumps(out, indent=2))
     print('Wrote metrics to', METRICS_OUT)
 
