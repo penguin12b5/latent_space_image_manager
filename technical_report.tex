@@ -286,7 +286,7 @@ The script evaluates all four methods across the 11 benchmark images (\texttt{ca
 
 \begin{itemize}
   \item \texttt{results/evaluate\_image\_blending\_result.json}: Per-image scores (edge blending, background smoothness, object preservation, $Q_{\text{img}}$ composite) for each method, plus per-image winners. This is the primary source for Table~5 (per-image $Q_{\text{img}}$) in the paper.
-  \item \texttt{results/metrics.json} (merged): Adds \texttt{boundary\_energy}, \texttt{background\_laplacian}, and \texttt{object\_ssim} aggregates so that downstream scripts (notably \texttt{eval\_metrics.py}) can compute $Q_{\text{agg}}$ with real boundary values.
+  \item \texttt{results/metrics.json} (merged): Adds \texttt{boundary\_energy} (boundary error $E$), \texttt{background\_laplacian}, and \texttt{object\_ssim} aggregates so that downstream scripts (notably \texttt{eval\_metrics.py}) can compute $Q_{\text{agg}}$ with real boundary values.
 \end{itemize}
 
 % ============================================================================
@@ -354,12 +354,12 @@ Both masks are placed into full-image-resolution arrays using \texttt{paste\_roi
 The same IoU value is reported for DOD-SAM and LOL-SAM (identical mask), and for DOD-FADE and LOL-FADE (identical mask).
 
 % ============================================================================
-\section{Boundary Energy Augmentation: \texttt{augment\_metrics\_with\_masks.py}}
+\section{Boundary Error Augmentation: \texttt{augment\_metrics\_with\_masks.py}}
 
 This script augments the \texttt{metrics.json} file with three additional per-method metrics. It reads method results from \texttt{images\_eval/<method>/} and ground-truth masks from \texttt{images/masks/}:
 
 \begin{itemize}
-  \item \textbf{Boundary Energy}: Mean gradient magnitude within a 4-pixel morphological boundary band. Reported as raw value (not exponentially decayed).
+  \item \textbf{Boundary Error ($E$)}: RMSE of image gradients within a 4-pixel morphological boundary band (8-pixel total width). Reported as raw value (not exponentially decayed); lower values indicate smoother seam integration. Note: the code variable is named \texttt{boundary\_energy} but corresponds to Boundary error $E$ in the paper.
   \item \textbf{Background Laplacian}: Mean absolute Laplacian in the background region (raw high-frequency energy).
   \item \textbf{Object SSIM}: Structural similarity restricted to the object bounding box.
 \end{itemize}
