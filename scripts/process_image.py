@@ -334,7 +334,21 @@ def process_image_lol(image_processor, image_displayer, image_path, output_name,
     #take image and find its subjects
     image = load_image(image_path)
     image_displayer.add_to_plot(np.array(image), 0, 0, title="Original")
+
     subjects = image_processor.find_subjects(image, max_subjects=max_subjects)
+    # stylized experiment: 
+    # for cat3.png, pick the 2nd object
+    if saturate_factor != 1.0:
+        print(f"Applying stylized effect with SAM mask saturation factor: {saturate_factor}")
+        if os.path.basename(image_path) == "cat3.png":
+            print("This cat3 will pick 2nd object")
+            subjects = [subjects[1]] if len(subjects) > 1 else subjects
+        else:
+            print("This image will pick the 1st detected object")
+            subjects = [subjects[0]] if len(subjects) > 0 else subjects
+    else:
+        print("No stylized effect applied")
+        
 
     encoded_image = image_processor.encode(image_processor.resize_image(image, scale))
 
@@ -408,7 +422,7 @@ def process_image_lol_sam_foreground(image_processor, image_displayer, image_pat
             align_corners=False
         )
         mask = mask / 255.0 * saturate_factor
-        
+
         # Make the mask crisp (binary) so there is no semi-transparent blur bleeding into the object edge
         mask = torch.where(mask > 0.5, torch.ones_like(mask), torch.zeros_like(mask))
 
@@ -426,6 +440,19 @@ def process_image_lol_sam_foreground(image_processor, image_displayer, image_pat
     image_displayer.add_to_plot(np.array(image), 0, 0, title="Original")
     subjects = image_processor.find_subjects(image, max_subjects=max_subjects)
 
+    # stylized experiment: 
+    # for cat3.png, pick the 2nd object
+    if saturate_factor != 1.0:
+        print(f"Applying stylized effect with SAM mask saturation factor: {saturate_factor}")
+        if os.path.basename(image_path) == "cat3.png":
+            print("This cat3 will pick 2nd object")
+            subjects = [subjects[1]] if len(subjects) > 1 else subjects
+        else:
+            print("This image will pick the 1st detected object")
+            subjects = [subjects[0]] if len(subjects) > 0 else subjects
+    else:
+        print("No stylized effect applied")
+                
     # 2. Create the CRISP foreground layer (No downscaling)
     sharp_image_latent = image_processor.encode(image)
 
@@ -486,8 +513,8 @@ import argparse
 
 # Set SAM checkpoint environment variable
 if 'SAM_CHECKPOINT' not in os.environ:
-    #os.environ['SAM_CHECKPOINT'] = str(_REPO / 'models' / 'sam_vit_b_01ec64.pth')
-    os.environ['SAM_CHECKPOINT'] = str(_REPO / 'models' / 'sam_vit_h_4b8939.pth')
+    os.environ['SAM_CHECKPOINT'] = str(_REPO / 'models' / 'sam_vit_b_01ec64.pth')
+    #os.environ['SAM_CHECKPOINT'] = str(_REPO / 'models' / 'sam_vit_h_4b8939.pth')
 
 p = ImageProcessor()
 d = ImageDisplayer(1, 2)
