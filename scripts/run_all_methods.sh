@@ -43,7 +43,7 @@ if false; then
 fi
 
 # Experiment with over saturate factors
-if true; then
+if false; then
     #methods=("lol_sam" "lol_sam_foreground")
     methods=("lol_sam_foreground")
     for method in "${methods[@]}"; do
@@ -56,6 +56,41 @@ if true; then
                     echo "Completed: $image with $method method at scale $scale and saturate factor $saturate_factor. Image at: ${method}/${image}_${scale}_saturate_${saturate_factor}"
                     echo "---"
                 done
+            done
+        done
+    done
+fi
+
+# Experiment with over saturate factors at scale = 2.0
+if false; then    
+    methods=("lol_sam")
+    for method in "${methods[@]}"; do
+        for image in "${images[@]}"; do
+            for scale in "0.25"; do
+                scale_f=$(printf "%.2f" "$scale")
+                for saturate_factor in "2.0"; do
+                    echo "Processing: $image with $method method at scale $scale and saturate factor $saturate_factor..."
+                    python "${SCRIPT_DIR}/process_image.py" --method "$method" --input_img_path "images/input/${image}.png" --output_img_path "${method}/${image}_${scale}_saturate_${saturate_factor}" --scale $scale_f --max_subjects "2" --saturate_factor "$saturate_factor"
+                    echo "Completed: $image with $method method at scale $scale and saturate factor $saturate_factor. Image at: ${method}/${image}_${scale}_saturate_${saturate_factor}"
+                    echo "---"
+                done
+            done
+        done
+    done
+fi
+
+# re-run scale=0.25 default case
+if true; then
+    methods=("dod_fade")
+    for method in "${methods[@]}"; do
+        for image in "${images[@]}"; do
+            for scale in "0.25"; do
+                echo "Processing: $image with $method method at scale $scale..."
+                # convert scale to float
+                scale_f=$(printf "%.2f" "$scale")
+                python "${SCRIPT_DIR}/process_image.py" --method "$method" --input_img_path "images/input/${image}.png" --output_img_path "${method}/${image}_${scale}" --scale $scale_f --max_subjects "2"
+                echo "Completed: $image with $method method at scale $scale"
+                echo "---"
             done
         done
     done
