@@ -1,99 +1,93 @@
 #!/bin/bash
+set -euo pipefail
 
-# Script to run all methods (DOD, SAM, LOL) on all images (cat1, cat2)
-
-images=("cat1" "cat2" "cat3" "car1" "car2" "car3" "dog1" "dog2" "horse1" "horse2" "horse3")
-# methods=("dod_fade" "dod_sam" "lol_fade" "lol_sam")
-methods=("lol_sam_foreground")
-
-# get current directory of the script
 SCRIPT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )"
+PYTHON="python"
 
-if false; then
-    methods=("dod_fade", "dod_sam", "lol_fade", "lol_sam", "lol_sam_foreground")
+IMAGES=("cat1" "cat2" "cat3" "car1" "car2" "car3" "dog1" "dog2" "horse1" "horse2" "horse3")
+
+PASS=0
+FAIL=0
+
+run_one() {
+    local method="$1"
+    local image="$2"
+    local scale="$3"
+    local saturate_factor="${4:-1.0}"
+    local max_subjects="${5:-2}"
+
+    local scale_f
+    scale_f=$(printf "%.2f" "$scale")
+    local output_path="${method}/${image}_${scale_f}"
+    if [[ "$saturate_factor" != "1.0" ]]; then
+        output_path="${method}/${image}_${scale_f}_saturate_${saturate_factor}"
+    fi
+
+    echo "Processing: $image | method=$method scale=$scale_f saturate=$saturate_factor"
+
+    if "$PYTHON" "$SCRIPT_DIR/process_image.py" \
+        --method "$method" \
+        --input_img_path "images/input/${image}.png" \
+        --output_img_path "$output_path" \
+        --scale "$scale_f" \
+        --max_subjects "$max_subjects" \
+        --saturate_factor "$saturate_factor"; then
+        echo "  OK: $output_path"
+        PASS=$((PASS + 1))
+    else
+        echo "  FAILED: $output_path"
+        FAIL=$((FAIL + 1))
+    fi
+    echo "---"
+}
+
+# --- Experiment functions ---
+
+run_all_scales() {
+    local methods=("dod_fade" "dod_sam" "lol_fade" "lol_sam" "lol_sam_foreground")
+    local scales=("0.10" "0.25" "0.50" "0.80" "0.90")
     for method in "${methods[@]}"; do
-        for image in "${images[@]}"; do
-            for scale in "0.10" "0.25" "0.50" "0.80" "0.90"; do
-                echo "Processing: $image with $method method at scale $scale..."
-                # convert scale to float
-                scale_f=$(printf "%.2f" "$scale")
-                python "${SCRIPT_DIR}/process_image.py" --method "$method" --input_img_path "images/input/${image}.png" --output_img_path "${method}/${image}_${scale}" --scale $scale_f --max_subjects "2"
-                echo "Completed: $image with $method method at scale $scale"
-                echo "---"
+        for image in "${IMAGES[@]}"; do
+            for scale in "${scales[@]}"; do
+                run_one "$method" "$image" "$scale"
             done
         done
     done
-fi
+}
 
-# LOL: don't need to downscale. Run scale = 1.0 only
-if false; then
-    methods=("lol_fade" "lol_sam" "lol_sam_foreground")
+run_saturate_lol_sam() {
+    local methods=("lol_sam")
     for method in "${methods[@]}"; do
-        for image in "${images[@]}"; do
-            for scale in "1.0"; do
-                echo "Processing: $image with $method method at scale $scale..."
-                # convert scale to float
-                scale_f=$(printf "%.2f" "$scale")
-                python "${SCRIPT_DIR}/process_image.py" --method "$method" --input_img_path "images/input/${image}.png" --output_img_path "${method}/${image}_${scale}" --scale $scale_f --max_subjects "2"
-                echo "Completed: $image with $method method at scale $scale. Image at: ${method}/${image}_${scale}"
-                echo "---"
-            done
+        for image in "${IMAGES[@]}"; do
+            run_one "$method" "$image" "0.25" "2.0"
         done
     done
-fi
+}
 
-# Experiment with over saturate factors
-if false; then
-    #methods=("lol_sam" "lol_sam_foreground")
-    methods=("lol_sam_foreground")
-    for method in "${methods[@]}"; do
-        for image in "${images[@]}"; do
-            for scale in "0.1" "0.25"; do
-                scale_f=$(printf "%.2f" "$scale")
-                for saturate_factor in "1.5" "2.0" "3.0"; do
-                    echo "Processing: $image with $method method at scale $scale and saturate factor $saturate_factor..."
-                    python "${SCRIPT_DIR}/process_image.py" --method "$method" --input_img_path "images/input/${image}.png" --output_img_path "${method}/${image}_${scale}_saturate_${saturate_factor}" --scale $scale_f --max_subjects "2" --saturate_factor "$saturate_factor"
-                    echo "Completed: $image with $method method at scale $scale and saturate factor $saturate_factor. Image at: ${method}/${image}_${scale}_saturate_${saturate_factor}"
-                    echo "---"
-                done
-            done
-        done
-    done
-fi
+# --- CLI ---
 
-# Experiment with over saturate factors at scale = 2.0
-if false; then    
-    methods=("lol_sam")
-    for method in "${methods[@]}"; do
-        for image in "${images[@]}"; do
-            for scale in "0.25"; do
-                scale_f=$(printf "%.2f" "$scale")
-                for saturate_factor in "2.0"; do
-                    echo "Processing: $image with $method method at scale $scale and saturate factor $saturate_factor..."
-                    python "${SCRIPT_DIR}/process_image.py" --method "$method" --input_img_path "images/input/${image}.png" --output_img_path "${method}/${image}_${scale}_saturate_${saturate_factor}" --scale $scale_f --max_subjects "2" --saturate_factor "$saturate_factor"
-                    echo "Completed: $image with $method method at scale $scale and saturate factor $saturate_factor. Image at: ${method}/${image}_${scale}_saturate_${saturate_factor}"
-                    echo "---"
-                done
-            done
-        done
-    done
-fi
+usage() {
+    cat <<EOF
+Usage: $(basename "$0") <experiment>
 
-# re-run scale=0.25 default case
-if true; then
-    methods=("dod_fade")
-    for method in "${methods[@]}"; do
-        for image in "${images[@]}"; do
-            for scale in "0.25"; do
-                echo "Processing: $image with $method method at scale $scale..."
-                # convert scale to float
-                scale_f=$(printf "%.2f" "$scale")
-                python "${SCRIPT_DIR}/process_image.py" --method "$method" --input_img_path "images/input/${image}.png" --output_img_path "${method}/${image}_${scale}" --scale $scale_f --max_subjects "2"
-                echo "Completed: $image with $method method at scale $scale"
-                echo "---"
-            done
-        done
-    done
-fi
+Experiments:
+  all_scales       All methods at scales 0.10–0.90 (default)
+  saturate_lol_sam lol_sam at scale 0.25 with saturate 2.0
+EOF
+    exit 0
+}
 
-echo "All processing complete!"
+EXPERIMENT="${1:-all_scales}"
+
+case "$EXPERIMENT" in
+    -h|--help)       usage ;;
+    all_scales)      run_all_scales ;;
+    saturate_lol_sam) run_saturate_lol_sam ;;
+    *)
+        echo "Unknown experiment: $EXPERIMENT"
+        usage
+        ;;
+esac
+
+echo ""
+echo "Done. Passed: $PASS  Failed: $FAIL"
